@@ -1,17 +1,25 @@
 using UnityEngine;
 using System.Collections.Generic;
+using AI;
 
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
 {
-    public float viewDistance;
-    public float fovAngle;
-    public int segments; 
+    [SerializeField] private AIAgent agent;
+    private float _viewDistance;
+    private float _fovAngle;
+    private int _segments; 
 
     void Start()
     {
+        _viewDistance = agent.viewDistance;
+        _fovAngle = agent.fovAngle;
+        _segments = agent.segments;
+        Mesh mesh = CreateFOVMesh();
         MeshFilter mf = GetComponent<MeshFilter>();
-        mf.mesh = CreateFOVMesh();
+        mf.mesh = mesh;
+        MeshCollider mc = GetComponent<MeshCollider>();
+        mc.sharedMesh = mesh;
     }
 
     Mesh CreateFOVMesh()
@@ -24,15 +32,15 @@ public class MeshGenerator : MonoBehaviour
         // The center of the cone is at the origin
         vertices.Add(Vector3.zero);
 
-        float halfFOV = fovAngle * 0.5f;
-        float angleIncrement = fovAngle / segments;
+        float halfFOV = _fovAngle * 0.5f;
+        float angleIncrement = _fovAngle / _segments;
 
         // Create vertices along the arc
-        for (int i = 0; i <= segments; i++)
+        for (int i = 0; i <= _segments; i++)
         {
             float currentAngle = -halfFOV + i * angleIncrement;
             float rad = currentAngle * Mathf.Deg2Rad;
-            Vector3 vertex = new Vector3(Mathf.Sin(rad), 0, Mathf.Cos(rad)) * viewDistance;
+            Vector3 vertex = new Vector3(Mathf.Sin(rad), 0, Mathf.Cos(rad)) * _viewDistance;
             vertices.Add(vertex);
         }
 

@@ -63,11 +63,11 @@ namespace AI
                 desiredVelocity = desiredVelocity.normalized * agent.maxSpeed;
             }
             
-            output.linear = desiredVelocity;
+            output.Linear = desiredVelocity;
             
             if (debug)
             {
-                Debug.DrawRay(transform.position, output.linear, Color.cyan);
+                // Debug.DrawRay(transform.position, output.linear, Color.cyan);
                 DebugUtils.DrawCircle(island.position, island.up, Color.blue, orbitRadius);
             }
             
@@ -78,7 +78,7 @@ namespace AI
         {
             SteeringOutput output = base.GetSteering(agent);
 
-            output.linear = GetKinematic(agent).linear - agent.Velocity;
+            output.Linear = GetKinematic(agent).Linear - agent.Velocity;
             
             return output;
         }

@@ -37,7 +37,7 @@ namespace AI
             }
             
             
-            output.linear = desiredVelocity;
+            output.Linear = desiredVelocity;
 			
             return output;
         }
@@ -48,7 +48,7 @@ namespace AI
 
             var output = base.GetSteering(agent);
 
-            output.linear = GetKinematic(agent).linear - agent.Velocity;
+            output.Linear = GetKinematic(agent).Linear - agent.Velocity;
 
             return output;
         }

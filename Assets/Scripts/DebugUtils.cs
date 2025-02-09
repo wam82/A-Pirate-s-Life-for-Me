@@ -5,22 +5,22 @@ public static class DebugUtils
     public static void DrawCircle(Vector3 position, Vector3 up, Color color, float radius = 1f)
     {
         up = ((up == Vector3.zero) ? Vector3.up : up).normalized * radius;
-        Vector3 _forward = Vector3.Slerp(up, -up, 0.5f);
-        Vector3 _right = Vector3.Cross(up, _forward).normalized * radius;
+        Vector3 forward = Vector3.Slerp(up, -up, 0.5f);
+        Vector3 right = Vector3.Cross(up, forward).normalized * radius;
 
         Matrix4x4 matrix = new Matrix4x4();
 
-        matrix[0] = _right.x;
-        matrix[1] = _right.y;
-        matrix[2] = _right.z;
+        matrix[0] = right.x;
+        matrix[1] = right.y;
+        matrix[2] = right.z;
 
         matrix[4] = up.x;
         matrix[5] = up.y;
         matrix[6] = up.z;
 
-        matrix[8] = _forward.x;
-        matrix[9] = _forward.y;
-        matrix[10] = _forward.z;
+        matrix[8] = forward.x;
+        matrix[9] = forward.y;
+        matrix[10] = forward.z;
 
         Vector3 lastPoint = position + matrix.MultiplyPoint3x4(new Vector3(Mathf.Cos(0), 0, Mathf.Sin(0)));
         Vector3 nextPoint = Vector3.zero;

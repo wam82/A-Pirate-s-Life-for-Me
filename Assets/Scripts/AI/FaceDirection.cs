@@ -12,7 +12,7 @@ namespace AI
                 return output;
 
             if (agent.Velocity != Vector3.zero)
-                output.angular = Quaternion.LookRotation(agent.Velocity);
+                output.Angular = Quaternion.LookRotation(agent.Velocity);
 
             return output;
         }
@@ -25,12 +25,12 @@ namespace AI
             if (agent.lockY)
             {
                 Vector3 from = Vector3.ProjectOnPlane(agent.transform.forward, Vector3.up);
-                Vector3 to = GetKinematic(agent).angular * Vector3.forward;
+                Vector3 to = GetKinematic(agent).Angular * Vector3.forward;
                 float angleY = Vector3.SignedAngle(from, to, Vector3.up);
-                output.angular = Quaternion.AngleAxis(angleY, Vector3.up);
+                output.Angular = Quaternion.AngleAxis(angleY, Vector3.up);
             }
             else
-                output.angular = Quaternion.FromToRotation(agent.transform.forward, GetKinematic(agent).angular * Vector3.forward);
+                output.Angular = Quaternion.FromToRotation(agent.transform.forward, GetKinematic(agent).Angular * Vector3.forward);
 
             return output;
         }

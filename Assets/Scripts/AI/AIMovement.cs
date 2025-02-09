@@ -8,12 +8,12 @@ namespace AI
 
         public virtual SteeringOutput GetKinematic(AIAgent agent)
         {
-            return new SteeringOutput { angular = agent.transform.rotation };
+            return new SteeringOutput { Angular = agent.transform.rotation };
         }
 
         public virtual SteeringOutput GetSteering(AIAgent agent)
         {
-            return new SteeringOutput { angular = Quaternion.identity };
+            return new SteeringOutput { Angular = Quaternion.identity };
         }
     }
 }

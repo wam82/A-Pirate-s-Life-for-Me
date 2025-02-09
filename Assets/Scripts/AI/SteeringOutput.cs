@@ -4,7 +4,7 @@ namespace AI
 {
     public struct SteeringOutput
     {
-        public Vector3 linear;
-        public Quaternion angular;
+        public Vector3 Linear;
+        public Quaternion Angular;
     }
 }

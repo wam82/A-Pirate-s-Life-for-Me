@@ -1,6 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace AI
@@ -9,7 +9,7 @@ namespace AI
     {
         public enum ShipState
         {
-            Idle, Navigating, Docking, Waiting, Undocking, Wandering, Pursuing
+            Idle, Navigating, Docking, Waiting, Undocking, Wandering, Pursuing, Fleeing, Sneaking, TargetLost
         }
 
         public ShipState CurrentState { get; private set; } = ShipState.Idle;
@@ -19,15 +19,21 @@ namespace AI
             // Debug.Log("Ship state changed to: " + CurrentState);
         }
         
-        private Queue<Transform> shipQueue = new Queue<Transform>();
-        public GameObject[] portList;
+        private Queue<Transform> _shipQueue = new Queue<Transform>();
+        public GameObject[] ports;
+        public GameObject[] tradeShips;
         public float maxSpeed;
         public bool lockY = true;
         public bool debug;
         
         public Vector3 Velocity { get; set; }
         
-
+        public float viewDistance;
+        public float fovAngle;
+        public int segments;
+        
+        public FOVTrigger fovTrigger;
+        
         [SerializeField] private Transform trackedTarget;
         [SerializeField] private Vector3 targetPosition;
         public Vector3 TargetPosition
@@ -37,11 +43,11 @@ namespace AI
 
         private void Start()
         {
-            if (portList.Length > 0)
+            if (ports.Length > 0)
             {
-                foreach (GameObject port in portList)
+                foreach (GameObject port in ports)
                 {
-                    shipQueue.Enqueue(port.GetComponent<Transform>());
+                    _shipQueue.Enqueue(port.GetComponent<Transform>());
                 }
 
                 SetNewTarget();
@@ -51,7 +57,6 @@ namespace AI
             {
                 CurrentState = ShipState.Wandering;
             }
-            
         }
 
         private void Update()
@@ -81,6 +86,19 @@ namespace AI
             {
                 Move();
             }
+
+            if (CurrentState == ShipState.Pursuing)
+            {
+                Transform pursuedShip = fovTrigger.GetClosestTradeShip(transform);
+                trackedTarget = pursuedShip;
+                Move();
+            }
+            
+            if (CurrentState == ShipState.TargetLost)
+            {
+                trackedTarget = null;
+                CurrentState = ShipState.Wandering;
+            }
         }
 
         private void Move()
@@ -103,9 +121,9 @@ namespace AI
 
         private void SetNewTarget()
         {
-            Transform newTarget = shipQueue.Dequeue();
+            Transform newTarget = _shipQueue.Dequeue();
             trackedTarget = newTarget;
-            shipQueue.Enqueue(newTarget);
+            _shipQueue.Enqueue(newTarget);
         }
 
         private void GetSteeringSum(out Vector3 steeringForceSum, out Quaternion rotation)
@@ -113,10 +131,24 @@ namespace AI
             steeringForceSum = Vector3.zero;
             rotation = Quaternion.identity;
             AIMovement[] movements = GetComponents<AIMovement>();
+
+            // If the state is Wandering, only keep the Wander movement
+            if (CurrentState == ShipState.Wandering)
+            {
+                movements = movements.Where(m => m is Wander || m is FaceDirection).ToArray();
+            }
+
+            if (CurrentState == ShipState.Pursuing)
+            {
+                // Debug.Log(movements[0]);
+                movements = movements.Where(m => m is Pursue || m is FaceDirection).ToArray();
+                // Debug.Log("After: " +movements.Length);
+            }
+            
             foreach (AIMovement movement in movements)
             {
-                steeringForceSum += movement.GetSteering(this).linear;
-                rotation *= movement.GetSteering(this).angular;
+                steeringForceSum += movement.GetSteering(this).Linear;
+                rotation *= movement.GetSteering(this).Angular;
             }
         }
     }
