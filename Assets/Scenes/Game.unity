@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 158768635}
   m_Layer: 0
   m_Name: Port
-  m_TagString: Untagged
+  m_TagString: Port
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 200291547}
   m_Layer: 0
   m_Name: Island
-  m_TagString: Untagged
+  m_TagString: Island
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -484,6 +484,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1581923103}
     - target: {fileID: 636561566307885526, guid: 4f28039493956b044bff5de07fb3bc79, type: 3}
+      propertyPath: ports.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 636561566307885526, guid: 4f28039493956b044bff5de07fb3bc79, type: 3}
+      propertyPath: ports.Array.data[0]
+      value: 
+      objectReference: {fileID: 158768633}
+    - target: {fileID: 636561566307885526, guid: 4f28039493956b044bff5de07fb3bc79, type: 3}
+      propertyPath: ports.Array.data[1]
+      value: 
+      objectReference: {fileID: 1089144219}
+    - target: {fileID: 636561566307885526, guid: 4f28039493956b044bff5de07fb3bc79, type: 3}
+      propertyPath: ports.Array.data[2]
+      value: 
+      objectReference: {fileID: 1508089913}
+    - target: {fileID: 636561566307885526, guid: 4f28039493956b044bff5de07fb3bc79, type: 3}
+      propertyPath: ports.Array.data[3]
+      value: 
+      objectReference: {fileID: 2075896318}
+    - target: {fileID: 636561566307885526, guid: 4f28039493956b044bff5de07fb3bc79, type: 3}
       propertyPath: tradeShips.Array.data[0]
       value: 
       objectReference: {fileID: 4673011310479136505}
@@ -657,7 +677,7 @@ GameObject:
   - component: {fileID: 1089144220}
   m_Layer: 0
   m_Name: Port (1)
-  m_TagString: Untagged
+  m_TagString: Port
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -762,7 +782,7 @@ GameObject:
   - component: {fileID: 1508089914}
   m_Layer: 0
   m_Name: Port (2)
-  m_TagString: Untagged
+  m_TagString: Port
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -972,7 +992,7 @@ GameObject:
   - component: {fileID: 2075896319}
   m_Layer: 0
   m_Name: Port (3)
-  m_TagString: Untagged
+  m_TagString: Port
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1112,6 +1132,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3266059497188907933, guid: dc1a5e47d3fb27d43b56b9fd0a268081, type: 3}
+      propertyPath: pirates.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3266059497188907933, guid: dc1a5e47d3fb27d43b56b9fd0a268081, type: 3}
       propertyPath: ports.Array.data[0]
       value: 
       objectReference: {fileID: 158768633}
@@ -1127,6 +1151,10 @@ PrefabInstance:
       propertyPath: ports.Array.data[3]
       value: 
       objectReference: {fileID: 2075896318}
+    - target: {fileID: 3266059497188907933, guid: dc1a5e47d3fb27d43b56b9fd0a268081, type: 3}
+      propertyPath: pirates.Array.data[0]
+      value: 
+      objectReference: {fileID: 930405091}
     - target: {fileID: 7943054004276236687, guid: dc1a5e47d3fb27d43b56b9fd0a268081, type: 3}
       propertyPath: m_Name
       value: Trade Ship

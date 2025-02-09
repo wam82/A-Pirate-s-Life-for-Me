@@ -2087,8 +2087,8 @@ GameObject:
   - component: {fileID: 5791334419527094204}
   - component: {fileID: 4135644241553744498}
   - component: {fileID: 636561566307885526}
-  - component: {fileID: 3070651257066218207}
   - component: {fileID: 4202548035551365537}
+  - component: {fileID: 3070651257066218207}
   m_Layer: 0
   m_Name: Pirate Ship
   m_TagString: PirateShip
@@ -2216,30 +2216,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ports: []
-  tradeShips:
-  - {fileID: 0}
+  pirates: []
+  fovTrigger: {fileID: 0}
   maxSpeed: 1.5
   lockY: 1
   debug: 1
   viewDistance: 75
   fovAngle: 120
   segments: 20
-  fovTrigger: {fileID: 0}
   trackedTarget: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
---- !u!114 &3070651257066218207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5111747836665025539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b12559160defdb247970f62cb86125da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debug: 1
 --- !u!114 &4202548035551365537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2258,6 +2244,19 @@ MonoBehaviour:
   island: {fileID: 0}
   orbitRadius: 15
   correctionFactor: 0.5
+--- !u!114 &3070651257066218207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5111747836665025539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b12559160defdb247970f62cb86125da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debug: 1
 --- !u!1 &5169389155046511927
 GameObject:
   m_ObjectHideFlags: 0
@@ -2784,6 +2783,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4b85955151d43747991b62185dba3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 0}
 --- !u!64 &3734147880477791060
 MeshCollider:
   m_ObjectHideFlags: 0

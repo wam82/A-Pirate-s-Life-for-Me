@@ -20,20 +20,23 @@ namespace AI
         }
         
         private Queue<Transform> _shipQueue = new Queue<Transform>();
+        
+        [Header("Other Objects")]
         public GameObject[] ports;
-        public GameObject[] tradeShips;
+        public GameObject[] pirates;
+        public FOVTrigger fovTrigger;
+        
+        [Header("Agent Settings")]
         public float maxSpeed;
         public bool lockY = true;
         public bool debug;
-        
-        public Vector3 Velocity { get; set; }
-        
         public float viewDistance;
         public float fovAngle;
         public int segments;
         
-        public FOVTrigger fovTrigger;
+        public Vector3 Velocity { get; set; }
         
+        [Header("Target Information")]
         [SerializeField] private Transform trackedTarget;
         [SerializeField] private Vector3 targetPosition;
         public Vector3 TargetPosition
@@ -43,7 +46,7 @@ namespace AI
 
         private void Start()
         {
-            if (ports.Length > 0)
+            if (ports.Length > 0 && transform.CompareTag("TradeShip"))
             {
                 foreach (GameObject port in ports)
                 {
