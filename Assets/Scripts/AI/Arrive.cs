@@ -22,7 +22,6 @@ namespace AI
 
             var output = base.GetKinematic(agent);
 
-            // TODO: calculate linear component
             Vector3 desiredVelocity = agent.TargetPosition - agent.transform.position;
             float distance = desiredVelocity.magnitude;
             desiredVelocity = desiredVelocity.normalized * agent.maxSpeed;
@@ -49,7 +48,6 @@ namespace AI
 
             var output = base.GetSteering(agent);
 
-            // TODO: calculate linear component
             output.linear = GetKinematic(agent).linear - agent.Velocity;
 
             return output;

@@ -9,7 +9,7 @@ namespace AI
     {
         public enum ShipState
         {
-            Idle, Navigating, Docking, Waiting, Undocking
+            Idle, Navigating, Docking, Waiting, Undocking, Wandering, Pursuing
         }
 
         public ShipState CurrentState { get; private set; } = ShipState.Idle;
@@ -37,13 +37,21 @@ namespace AI
 
         private void Start()
         {
-            foreach (GameObject port in portList)
+            if (portList.Length > 0)
             {
-                shipQueue.Enqueue(port.GetComponent<Transform>());
-            }
+                foreach (GameObject port in portList)
+                {
+                    shipQueue.Enqueue(port.GetComponent<Transform>());
+                }
 
-            SetNewTarget();
-            CurrentState = ShipState.Navigating;
+                SetNewTarget();
+                CurrentState = ShipState.Navigating;
+            }
+            else
+            {
+                CurrentState = ShipState.Wandering;
+            }
+            
         }
 
         private void Update()
@@ -55,13 +63,7 @@ namespace AI
 
             if (CurrentState == ShipState.Navigating)
             {
-                Vector3 steeringForceSum;
-                Quaternion rotation;
-                GetSteeringSum(out steeringForceSum, out rotation);
-                Velocity += steeringForceSum * Time.deltaTime;
-                Velocity = Vector3.ClampMagnitude(Velocity, maxSpeed);
-                transform.position += Velocity * Time.deltaTime;
-                transform.rotation *= rotation;
+                Move();
             }
 
             if (CurrentState == ShipState.Docking)
@@ -74,6 +76,22 @@ namespace AI
                 SetNewTarget();
                 CurrentState = ShipState.Navigating;
             }
+
+            if (CurrentState == ShipState.Wandering)
+            {
+                Move();
+            }
+        }
+
+        private void Move()
+        {
+            Vector3 steeringForceSum;
+            Quaternion rotation;
+            GetSteeringSum(out steeringForceSum, out rotation);
+            Velocity += steeringForceSum * Time.deltaTime;
+            Velocity = Vector3.ClampMagnitude(Velocity, maxSpeed);
+            transform.position += Velocity * Time.deltaTime;
+            transform.rotation *= rotation;
         }
 
         IEnumerator DockingSquence()
