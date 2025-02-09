@@ -16,7 +16,7 @@ namespace AI
 
         public void SetState(ShipState newState) {
             CurrentState = newState;
-            Debug.Log("Ship state changed to: " + CurrentState);
+            // Debug.Log("Ship state changed to: " + CurrentState);
         }
         
         private Queue<Transform> shipQueue = new Queue<Transform>();
