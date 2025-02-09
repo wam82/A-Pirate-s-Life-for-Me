@@ -2088,7 +2088,9 @@ GameObject:
   - component: {fileID: 4135644241553744498}
   - component: {fileID: 636561566307885526}
   - component: {fileID: 4202548035551365537}
+  - component: {fileID: 2044830728863922235}
   - component: {fileID: 3070651257066218207}
+  - component: {fileID: 8359299100844342274}
   m_Layer: 0
   m_Name: Pirate Ship
   m_TagString: PirateShip
@@ -2201,8 +2203,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 10.768394, y: 12.2494135, z: 43.247368}
-  m_Center: {x: 1.0206947, y: -5.13701, z: 2.074459}
+  m_Size: {x: 10.726418, y: 12.2494135, z: 40.86784}
+  m_Center: {x: 0.99970627, y: -5.13701, z: 0.8847073}
 --- !u!114 &636561566307885526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2217,6 +2219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ports: []
   pirates: []
+  island: {fileID: 0}
   fovTrigger: {fileID: 0}
   maxSpeed: 1.5
   lockY: 1
@@ -2241,9 +2244,23 @@ MonoBehaviour:
   debug: 1
   wanderDegrees: 90
   wanderInterval: 3
-  island: {fileID: 0}
   orbitRadius: 15
   correctionFactor: 0.5
+--- !u!114 &2044830728863922235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5111747836665025539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a235c74a5b2e34a4facda2241132e309, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debug: 0
+  avoidanceRadius: 3.5
+  avoidanceFactor: 2
 --- !u!114 &3070651257066218207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2257,6 +2274,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 1
+--- !u!114 &8359299100844342274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5111747836665025539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a30bbfab3b796a64b8ea9e8646c72ca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debug: 0
 --- !u!1 &5169389155046511927
 GameObject:
   m_ObjectHideFlags: 0

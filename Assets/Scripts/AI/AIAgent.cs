@@ -19,12 +19,15 @@ namespace AI
             // Debug.Log("Ship state changed to: " + CurrentState);
         }
         
-        private Queue<Transform> _shipQueue = new Queue<Transform>();
+        private Queue<Transform> _portQueue = new Queue<Transform>();
         
         [Header("Other Objects")]
         public GameObject[] ports;
         public GameObject[] pirates;
+        public GameObject[] tradeShips;
+        public GameObject island;
         public FOVTrigger fovTrigger;
+        public Queue<GameObject> Obstacles = new Queue<GameObject>();
         
         [Header("Agent Settings")]
         public float maxSpeed;
@@ -50,7 +53,7 @@ namespace AI
             {
                 foreach (GameObject port in ports)
                 {
-                    _shipQueue.Enqueue(port.GetComponent<Transform>());
+                    _portQueue.Enqueue(port.GetComponent<Transform>());
                 }
 
                 SetNewTarget();
@@ -69,39 +72,94 @@ namespace AI
                 Debug.DrawRay(transform.position, Velocity, Color.green);
             }
 
-            if (CurrentState == ShipState.Navigating)
+            // Trade ship behaviour
+            if (transform.CompareTag("TradeShip"))
             {
-                Move();
+                if (PursuitRegistry.Instance.IsPursued(transform))
+                {
+                    CurrentState = ShipState.Fleeing;
+                }
+                
+                if (CurrentState == ShipState.Navigating)
+                {
+                    Move();
+                }
+
+                if (CurrentState == ShipState.Docking)
+                {
+                    StartCoroutine(DockingSquence());
+                }
+
+                if (CurrentState == ShipState.Undocking)
+                {
+                    SetNewTarget();
+                    CurrentState = ShipState.Navigating;
+                }
+
+                if (CurrentState == ShipState.Fleeing)
+                {
+                    trackedTarget = GetClosestHarbor(transform, _portQueue);
+                }
             }
 
-            if (CurrentState == ShipState.Docking)
+            // Pirate ship behaviour
+            if (transform.CompareTag("PirateShip"))
             {
-                StartCoroutine(DockingSquence());
-            }
+                if (CurrentState == ShipState.Wandering)
+                {
+                    Obstacles.Enqueue(island);
+                    foreach (GameObject port in ports)
+                    {
+                        // Harbor Kill Radius
+                        // if (debug)
+                        // {
+                        //     DebugUtils.DrawCircle(port.transform.position, port.transform.up, Color.magenta, 2.5f);
+                        // }
+                        Obstacles.Enqueue(port);
+                    }
+                    Move();
 
-            if (CurrentState == ShipState.Undocking)
-            {
-                SetNewTarget();
-                CurrentState = ShipState.Navigating;
-            }
+                    Obstacles.Clear();
+                }
 
-            if (CurrentState == ShipState.Wandering)
-            {
-                Move();
-            }
-
-            if (CurrentState == ShipState.Pursuing)
-            {
-                Transform pursuedShip = fovTrigger.GetClosestTradeShip(transform);
-                trackedTarget = pursuedShip;
-                Move();
-            }
+                if (CurrentState == ShipState.Pursuing)
+                {
+                    Obstacles.Enqueue(island);
+                
+                    Transform pursuedShip = fovTrigger.GetClosestTradeShip(transform);
+                    PursuitRegistry.Instance.RegisterPursuit(transform, pursuedShip);
+                    trackedTarget = pursuedShip;
+                
+                    Move();
+                
+                    Obstacles.Clear();
+                }
             
-            if (CurrentState == ShipState.TargetLost)
+                if (CurrentState == ShipState.TargetLost)
+                {
+                    trackedTarget = null;
+                    PursuitRegistry.Instance.RemovePursuit(transform);
+                    CurrentState = ShipState.Wandering;
+                }
+            }            
+        }
+        
+        private Transform GetClosestHarbor(Transform tradeShip, Queue<Transform> harbors)
+        {
+            Transform closestHarbor = null;
+            float closestDistanceSqr = float.MaxValue;
+
+            foreach (Transform harbor in harbors)
             {
-                trackedTarget = null;
-                CurrentState = ShipState.Wandering;
+                float distanceSqr = (harbor.position - tradeShip.position).sqrMagnitude;
+                if (distanceSqr < closestDistanceSqr)
+                {
+                    closestDistanceSqr = distanceSqr;
+                    closestHarbor = harbor;
+                }
             }
+
+            return closestHarbor;
         }
 
         private void Move()
@@ -124,9 +182,9 @@ namespace AI
 
         private void SetNewTarget()
         {
-            Transform newTarget = _shipQueue.Dequeue();
+            Transform newTarget = _portQueue.Dequeue();
             trackedTarget = newTarget;
-            _shipQueue.Enqueue(newTarget);
+            _portQueue.Enqueue(newTarget);
         }
 
         private void GetSteeringSum(out Vector3 steeringForceSum, out Quaternion rotation)
@@ -135,17 +193,24 @@ namespace AI
             rotation = Quaternion.identity;
             AIMovement[] movements = GetComponents<AIMovement>();
 
-            // If the state is Wandering, only keep the Wander movement
+            if (CurrentState == ShipState.Navigating)
+            {
+                movements = movements.Where(m => m is Arrive || m is FaceDirection || m is Avoidance).ToArray();
+            }
+            
+            if (CurrentState == ShipState.Fleeing)
+            {
+                movements = movements.Where(m => m is Flee || m is FaceDirection || m is Avoidance).ToArray();
+            }
+            
             if (CurrentState == ShipState.Wandering)
             {
-                movements = movements.Where(m => m is Wander || m is FaceDirection).ToArray();
+                movements = movements.Where(m => m is Wander || m is FaceDirection || m is Avoidance).ToArray();
             }
 
             if (CurrentState == ShipState.Pursuing)
             {
-                // Debug.Log(movements[0]);
-                movements = movements.Where(m => m is Pursue || m is FaceDirection).ToArray();
-                // Debug.Log("After: " +movements.Length);
+                movements = movements.Where(m => m is Pursue || m is FaceDirection || m is Avoidance).ToArray();
             }
             
             foreach (AIMovement movement in movements)

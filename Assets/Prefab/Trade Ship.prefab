@@ -3279,8 +3279,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 10.768394, y: 12.2494135, z: 43.247368}
-  m_Center: {x: 1.0206947, y: -5.13701, z: 2.074459}
+  m_Size: {x: 10.726418, y: 12.2494135, z: 40.86784}
+  m_Center: {x: 0.99970627, y: -5.13701, z: 0.8847073}
 --- !u!114 &3266059497188907933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3298,14 +3298,15 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  tradeShips: []
+  pirates: []
+  island: {fileID: 0}
+  fovTrigger: {fileID: 0}
   maxSpeed: 3
   lockY: 1
   debug: 1
   viewDistance: 0
   fovAngle: 0
   segments: 0
-  fovTrigger: {fileID: 0}
   trackedTarget: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &3025267458732013686

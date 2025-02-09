@@ -14,12 +14,13 @@ namespace AI
         private Vector3 _lastMovement;
 
         [Header("Island Settings")]
-        public Transform island;
+        private Transform island;
         public float orbitRadius;
         public float correctionFactor;
 
         public override SteeringOutput GetKinematic(AIAgent agent)
         {
+            // island = agent.island.transform;
             SteeringOutput output = base.GetKinematic(agent);
             WanderTimer += Time.deltaTime;
 
@@ -76,6 +77,7 @@ namespace AI
 
         public override SteeringOutput GetSteering(AIAgent agent)
         {
+            island = agent.island.transform;
             SteeringOutput output = base.GetSteering(agent);
 
             output.Linear = GetKinematic(agent).Linear - agent.Velocity;
