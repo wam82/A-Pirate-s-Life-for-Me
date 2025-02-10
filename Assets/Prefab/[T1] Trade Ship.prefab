@@ -3165,11 +3165,11 @@ GameObject:
   - component: {fileID: 1794775973133191860}
   - component: {fileID: 4584868216121190987}
   - component: {fileID: 705440826062493206}
-  - component: {fileID: 3266059497188907933}
-  - component: {fileID: 3025267458732013686}
-  - component: {fileID: 1396025857686699866}
+  - component: {fileID: 4665711512038986609}
+  - component: {fileID: 5469133640946074210}
+  - component: {fileID: 7405543330846835358}
   m_Layer: 0
-  m_Name: Trade Ship
+  m_Name: '[T1] Trade Ship'
   m_TagString: TradeShip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3281,7 +3281,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10.726418, y: 12.2494135, z: 40.86784}
   m_Center: {x: 0.99970627, y: -5.13701, z: 0.8847073}
---- !u!114 &3266059497188907933
+--- !u!114 &4665711512038986609
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3290,26 +3290,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 7943054004276236687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41116c9d1db31bf4b99e7d45b47feb61, type: 3}
+  m_Script: {fileID: 11500000, guid: 6928fa1e3b3b24f1ba95cca08835b0be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ports:
+  portList:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  pirates: []
-  island: {fileID: 0}
-  fovTrigger: {fileID: 0}
   maxSpeed: 3
   lockY: 1
   debug: 1
-  viewDistance: 0
-  fovAngle: 0
-  segments: 0
   trackedTarget: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
---- !u!114 &3025267458732013686
+--- !u!114 &5469133640946074210
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3318,13 +3312,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7943054004276236687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 224183f8045f6fd4c81d1765000391a8, type: 3}
+  m_Script: {fileID: 11500000, guid: c0bbd085153504589a32c51b809604f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 1
   slowRadius: 10
   stopRadius: 5
---- !u!114 &1396025857686699866
+--- !u!114 &7405543330846835358
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3333,7 +3327,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7943054004276236687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b12559160defdb247970f62cb86125da, type: 3}
+  m_Script: {fileID: 11500000, guid: 238461a3c56ff4d4bb5bcd500fd13eb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 1

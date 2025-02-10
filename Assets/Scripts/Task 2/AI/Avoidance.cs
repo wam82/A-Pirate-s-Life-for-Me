@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace AI
+namespace Task_2.AI
 {
     public class Avoidance : AIMovement
     {
@@ -19,11 +19,23 @@ namespace AI
 
             foreach (GameObject obstacle in agent.Obstacles)
             {
-                Vector3 directionAway = agent.transform.position - obstacle.transform.position;
+                // Try to get the collider from the obstacle
+                Collider obstacleCollider = obstacle.GetComponent<Collider>();
+                if (obstacleCollider == null)
+                {
+                    // If there's no collider, fallback to using the transform position
+                    Debug.LogWarning("Obstacle " + obstacle.name + " does not have a Collider component.");
+                    continue;
+                }
+                
+                // Get the closest point on the obstacle's collider to the agent's position
+                Vector3 closestPoint = obstacleCollider.ClosestPoint(agent.transform.position);
+                Vector3 directionAway = agent.transform.position - closestPoint;
                 float distanceSquared = directionAway.sqrMagnitude;
 
                 if (distanceSquared <= squaredRadius && distanceSquared > 0)
                 {
+                    // Debug.Log("Avoided");
                     avoidanceForce += directionAway.normalized / distanceSquared;
                 }
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace AI
+namespace Task_2.AI
 {
     public class AIAgent : MonoBehaviour
     {
@@ -28,6 +28,7 @@ namespace AI
         public GameObject island;
         public FOVTrigger fovTrigger;
         public Queue<GameObject> Obstacles = new Queue<GameObject>();
+        private Transform _currentPort;
         
         [Header("Agent Settings")]
         public float maxSpeed;
@@ -75,14 +76,30 @@ namespace AI
             // Trade ship behaviour
             if (transform.CompareTag("TradeShip"))
             {
-                if (PursuitRegistry.Instance.IsPursued(transform))
+                if (PursuitRegistry.Instance.IsPursued(transform) && CurrentState != ShipState.Fleeing)
                 {
+                    _currentPort = trackedTarget;
                     CurrentState = ShipState.Fleeing;
                 }
                 
                 if (CurrentState == ShipState.Navigating)
                 {
+                    Obstacles.Enqueue(island);
+                    foreach (GameObject pirate in pirates)
+                    {
+                        Obstacles.Enqueue(pirate);
+                    }
+                    foreach (GameObject port in ports)
+                    {
+                        if (port.transform.Equals(trackedTarget))
+                        {
+                            continue;
+                        }
+
+                        Obstacles.Enqueue(port);
+                    }
                     Move();
+                    Obstacles.Clear();
                 }
 
                 if (CurrentState == ShipState.Docking)
@@ -98,7 +115,17 @@ namespace AI
 
                 if (CurrentState == ShipState.Fleeing)
                 {
-                    trackedTarget = GetClosestHarbor(transform, _portQueue);
+                    List<Transform> pursuingPirates = PursuitRegistry.Instance.GetPursuingShip(transform);
+                    if (pursuingPirates.Count > 0)
+                    {
+                        trackedTarget = pursuingPirates.First();
+                        Move();   
+                    }
+                    else
+                    {
+                        trackedTarget = _currentPort;
+                        CurrentState = ShipState.Navigating;
+                    }
                 }
             }
 

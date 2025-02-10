@@ -1,11 +1,12 @@
 using UnityEngine;
 
-namespace AI
+namespace Task_3.AI
 {
     public class Flee : AIMovement
     {
         public override SteeringOutput GetSteering(AIAgent agent)
         {
+            // Debug.Log("Reached");
             SteeringOutput output = base.GetSteering(agent);
             
             Vector3 desiredVelocity = agent.TargetPosition - agent.transform.position;
