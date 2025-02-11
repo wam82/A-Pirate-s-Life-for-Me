@@ -18,7 +18,7 @@ namespace Task_3.AI
 
         public override SteeringOutput GetKinematic(AIAgent agent)
         {
-            DrawDebug(agent);
+            // DrawDebug(agent);
 
             var output = base.GetKinematic(agent);
 

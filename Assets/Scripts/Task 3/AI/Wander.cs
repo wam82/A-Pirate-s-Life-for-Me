@@ -8,21 +8,20 @@ namespace Task_3.AI
         [Header("Wander Settings")]
         public float wanderDegrees;
         [Min(0)] public float wanderInterval;
-        protected float WanderTimer = 0;
+        private float _wanderTimer = 0;
 
         private Vector3 _lastDirection;
         private Vector3 _lastMovement;
 
         [Header("Island Settings")]
-        private Transform island;
+        private Transform _island;
         public float orbitRadius;
         public float correctionFactor;
 
         public override SteeringOutput GetKinematic(AIAgent agent)
         {
-            // island = agent.island.transform;
             SteeringOutput output = base.GetKinematic(agent);
-            WanderTimer += Time.deltaTime;
+            _wanderTimer += Time.deltaTime;
 
             if (_lastDirection == Vector3.zero)
             {
@@ -35,7 +34,7 @@ namespace Task_3.AI
             }
 
             Vector3 desiredVelocity = _lastMovement;
-            if (WanderTimer > wanderInterval)
+            if (_wanderTimer > wanderInterval)
             {
                 float angle = (Random.value - Random.value) * wanderDegrees;
                 Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * _lastDirection.normalized;
@@ -47,12 +46,12 @@ namespace Task_3.AI
 
                 _lastMovement = desiredVelocity;
                 _lastDirection = direction;
-                WanderTimer = 0;
+                _wanderTimer = 0;
             }
 
-            if (island != null)
+            if (_island != null)
             {
-                Vector3 toIsland = agent.transform.position - island.position;
+                Vector3 toIsland = agent.transform.position - _island.position;
                 toIsland = Vector3.ProjectOnPlane(toIsland, Vector3.up);
                 float currentDistance = toIsland.magnitude;
                 float error = currentDistance - orbitRadius;
@@ -69,7 +68,7 @@ namespace Task_3.AI
             if (debug)
             {
                 // Debug.DrawRay(transform.position, output.linear, Color.cyan);
-                DebugUtils.DrawCircle(island.position, island.up, Color.blue, orbitRadius);
+                DebugUtils.DrawCircle(_island.position, _island.up, Color.blue, orbitRadius);
             }
             
             return output;
@@ -77,7 +76,7 @@ namespace Task_3.AI
 
         public override SteeringOutput GetSteering(AIAgent agent)
         {
-            island = agent.island.transform;
+            _island = agent.island.transform;
             SteeringOutput output = base.GetSteering(agent);
 
             output.Linear = GetKinematic(agent).Linear - agent.Velocity;

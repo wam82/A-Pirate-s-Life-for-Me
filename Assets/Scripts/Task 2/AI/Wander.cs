@@ -20,7 +20,6 @@ namespace Task_2.AI
 
         public override SteeringOutput GetKinematic(AIAgent agent)
         {
-            // island = agent.island.transform;
             SteeringOutput output = base.GetKinematic(agent);
             WanderTimer += Time.deltaTime;
 

@@ -3247,12 +3247,13 @@ GameObject:
   m_Component:
   - component: {fileID: 7854158932524261096}
   - component: {fileID: 6257871164285158797}
-  - component: {fileID: 364804923229402353}
   - component: {fileID: 22095521817808555}
   - component: {fileID: 1506323818493523609}
   - component: {fileID: 4992222546606557025}
   - component: {fileID: 7110476164032507479}
   - component: {fileID: 1137237304992554202}
+  - component: {fileID: 2879536274882238581}
+  - component: {fileID: 697021434198879294}
   m_Layer: 0
   m_Name: '[T3] Trade Ship'
   m_TagString: TradeShip
@@ -3345,27 +3346,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &364804923229402353
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7909632326458159333}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.726418, y: 12.2494135, z: 40.86784}
-  m_Center: {x: 0.99970627, y: -5.13701, z: 0.8847073}
 --- !u!114 &22095521817808555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3391,11 +3371,13 @@ MonoBehaviour:
   maxSpeed: 3
   lockY: 1
   debug: 1
-  viewDistance: 0
+  viewDistance: 12.5
+  fovDistance: 0
   fovAngle: 0
   segments: 0
   trackedTarget: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
+  targetVelocity: {x: 0, y: 0, z: 0}
 --- !u!114 &1506323818493523609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3408,7 +3390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c97ce91571284e718c515cc9b3b4047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 0
+  debug: 1
   slowRadius: 10
   stopRadius: 5
 --- !u!114 &4992222546606557025
@@ -3423,7 +3405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9ad92c7b2db2490c9c584cda976e61e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 0
+  debug: 1
   avoidanceRadius: 2.5
   avoidanceFactor: 5
 --- !u!114 &7110476164032507479
@@ -3452,6 +3434,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
+--- !u!136 &2879536274882238581
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7909632326458159333}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 6
+  m_Height: 45
+  m_Direction: 2
+  m_Center: {x: 1, y: -4, z: 1}
+--- !u!114 &697021434198879294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7909632326458159333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3528231f3d05f4e9a895c6be2d369f3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debug: 0
+  bufferDistance: 10
+  arrivalThreshold: 7
+  crowdingSeparation: 1
 --- !u!1 &8131844556116692452
 GameObject:
   m_ObjectHideFlags: 0

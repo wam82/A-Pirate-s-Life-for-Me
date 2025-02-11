@@ -28,13 +28,16 @@ namespace Task_3.AI
         public GameObject island;
         public FOVTrigger fovTrigger;
         public Queue<GameObject> Obstacles = new Queue<GameObject>();
-        private Transform _currentPort;
+        private Transform _latestTarget;
+        private Transform _latestPort;
+        
         
         [Header("Agent Settings")]
         public float maxSpeed;
         public bool lockY = true;
         public bool debug;
         public float viewDistance;
+        public float fovDistance;
         public float fovAngle;
         public int segments;
         
@@ -43,9 +46,22 @@ namespace Task_3.AI
         [Header("Target Information")]
         [SerializeField] private Transform trackedTarget;
         [SerializeField] private Vector3 targetPosition;
+        [SerializeField] private Vector3 targetVelocity;
+        private Transform _sneakTarget;
+
+        public Transform TrackedTarget
+        {
+            get => trackedTarget;
+        }
+        
         public Vector3 TargetPosition
         {
             get => trackedTarget != null ? trackedTarget.position : targetPosition;
+        }
+
+        public Vector3 TargetVelocity
+        {
+            get => trackedTarget != null ? trackedTarget.GetComponent<AIAgent>().Velocity : targetVelocity;
         }
 
         private void Start()
@@ -76,14 +92,35 @@ namespace Task_3.AI
             // Trade ship behaviour
             if (transform.CompareTag("TradeShip"))
             {
+                if (debug)
+                {
+                    DebugUtils.DrawCircle(transform.position, transform.up, Color.black, viewDistance);
+                }
                 if (PursuitRegistry.Instance.IsPursued(transform) && CurrentState != ShipState.Fleeing)
                 {
-                    _currentPort = trackedTarget;
+                    if (trackedTarget.CompareTag("Port"))
+                    {
+                        _latestPort = trackedTarget;
+                    }
+                    _latestTarget = trackedTarget;
                     CurrentState = ShipState.Fleeing;
                 }
                 
                 if (CurrentState == ShipState.Navigating)
                 {
+                    // Check if you can sneak first
+                    _sneakTarget = GetSneakTarget();
+                    if (_sneakTarget != null)
+                    {
+                        if (trackedTarget.CompareTag("Port"))
+                        {
+                            _latestPort = trackedTarget;
+                        }
+                        _latestTarget = trackedTarget;
+                        trackedTarget = _sneakTarget;
+                        CurrentState = ShipState.Sneaking;
+                    }
+                    
                     Obstacles.Enqueue(island);
                     foreach (GameObject pirate in pirates)
                     {
@@ -115,6 +152,16 @@ namespace Task_3.AI
 
                 if (CurrentState == ShipState.Fleeing)
                 {
+                    Obstacles.Enqueue(island);
+                    foreach (GameObject port in ports)
+                    {
+                        if (port.transform.Equals(trackedTarget))
+                        {
+                            continue;
+                        }
+
+                        Obstacles.Enqueue(port);
+                    }
                     List<Transform> pursuingPirates = PursuitRegistry.Instance.GetPursuingShip(transform);
                     if (pursuingPirates.Count > 0)
                     {
@@ -123,7 +170,41 @@ namespace Task_3.AI
                     }
                     else
                     {
-                        trackedTarget = _currentPort;
+                        trackedTarget = _latestTarget.CompareTag("Port") ? _latestTarget : _latestPort;
+                        CurrentState = ShipState.Navigating;
+                    }
+                    Obstacles.Clear();
+                }
+
+                if (CurrentState == ShipState.Sneaking)
+                {
+                    // Check first if it's still worth it to flee
+                    _sneakTarget = GetSneakTarget();
+                    if (_sneakTarget != null)
+                    {
+                        if (trackedTarget.CompareTag("Port"))
+                        {
+                            Debug.Log("Somehow Entered");
+                            _latestPort = trackedTarget;
+                        }
+                        _latestTarget = trackedTarget;
+                        trackedTarget = _sneakTarget;
+                        Obstacles.Enqueue(island);
+                        foreach (GameObject port in ports)
+                        {
+                            if (port.transform.Equals(trackedTarget))
+                            {
+                                continue;
+                            }
+
+                            Obstacles.Enqueue(port);
+                        }
+                        Move();
+                        Obstacles.Clear();
+                    }
+                    else
+                    {
+                        trackedTarget = _latestTarget.CompareTag("Port") ? _latestTarget : _latestPort;
                         CurrentState = ShipState.Navigating;
                     }
                 }
@@ -137,11 +218,6 @@ namespace Task_3.AI
                     Obstacles.Enqueue(island);
                     foreach (GameObject port in ports)
                     {
-                        // Harbor Kill Radius
-                        // if (debug)
-                        // {
-                        //     DebugUtils.DrawCircle(port.transform.position, port.transform.up, Color.magenta, 2.5f);
-                        // }
                         Obstacles.Enqueue(port);
                     }
                     Move();
@@ -170,6 +246,59 @@ namespace Task_3.AI
                 }
             }            
         }
+        
+        private Transform GetSneakTarget()
+        {
+            Transform bestPirate = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (GameObject pirate in pirates)
+            {
+                Transform pirateTransform = pirate.transform;
+
+                Vector3 tradeToTarget = _latestPort.position - transform.position;
+                Vector3 tradeToPirate = pirateTransform.position - transform.position;
+
+                float tradeToTargetDist = tradeToTarget.magnitude;
+                float tradeToPirateDist = tradeToPirate.magnitude;
+
+                // 1. Check if pirate is within the view radius of the trade ship
+                if (tradeToPirateDist > viewDistance)
+                {
+                    // Debug.Log("Outside of view");
+                    continue;
+                }
+                // Debug.Log("Still in view");
+                
+                // 2. Check if pirate is physically between trade ship and the target
+                float pirateToTargetDist = Vector3.Distance(pirateTransform.position, TargetPosition);
+                if (pirateToTargetDist > tradeToTargetDist)
+                {
+                    Debug.Log("Not between target");
+                    continue;
+                } 
+                // Debug.Log("Still physically between me and target");
+
+                // 3. Check if the angle between trade-to-target and trade-to-pirate exceeds threshold
+                float angle = Vector3.Angle(tradeToTarget, tradeToPirate);
+                if (Mathf.Abs(angle) > 45f)
+                {
+                    Debug.Log("Too far apart");
+                    continue;
+                } 
+                // Debug.Log("All checks passed");
+
+                // Choose the closest pirate that meets criteria
+                if (tradeToPirateDist < closestDistance)
+                {
+                    closestDistance = tradeToPirateDist;
+                    bestPirate = pirateTransform;
+                }
+            }
+
+            return bestPirate;
+        }
+
         
         private Transform GetClosestHarbor(Transform tradeShip, Queue<Transform> harbors)
         {
@@ -211,6 +340,7 @@ namespace Task_3.AI
         {
             Transform newTarget = _portQueue.Dequeue();
             trackedTarget = newTarget;
+            _latestPort = newTarget;
             _portQueue.Enqueue(newTarget);
         }
 
@@ -228,6 +358,11 @@ namespace Task_3.AI
             if (CurrentState == ShipState.Fleeing)
             {
                 movements = movements.Where(m => m is Flee || m is FaceDirection || m is Avoidance).ToArray();
+            }
+
+            if (CurrentState == ShipState.Sneaking)
+            {
+                movements = movements.Where(m => m is Sneak || m is FaceDirection || m is Avoidance).ToArray();
             }
             
             if (CurrentState == ShipState.Wandering)

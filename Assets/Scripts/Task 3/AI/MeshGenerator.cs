@@ -13,7 +13,7 @@ namespace Task_3.AI
 
         void Start()
         {
-            _viewDistance = agent.viewDistance;
+            _viewDistance = agent.fovAngle;
             _fovAngle = agent.fovAngle;
             _segments = agent.segments;
             Mesh mesh = CreateFOVMesh();

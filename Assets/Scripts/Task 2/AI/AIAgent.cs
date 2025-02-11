@@ -43,9 +43,15 @@ namespace Task_2.AI
         [Header("Target Information")]
         [SerializeField] private Transform trackedTarget;
         [SerializeField] private Vector3 targetPosition;
+        [SerializeField] private Vector3 targetVelocity;
         public Vector3 TargetPosition
         {
             get => trackedTarget != null ? trackedTarget.position : targetPosition;
+        }
+        
+        public Vector3 TargetVelocity
+        {
+            get => trackedTarget != null ? trackedTarget.GetComponent<AIAgent>().Velocity : targetVelocity;
         }
 
         private void Start()

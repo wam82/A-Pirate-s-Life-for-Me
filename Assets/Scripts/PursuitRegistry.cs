@@ -1,20 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PursuitRegistry : MonoBehaviour
 {
     private static PursuitRegistry _instance;
-    public static PursuitRegistry Instance 
-    { 
-        get 
-        { 
+
+    public static PursuitRegistry Instance
+    {
+        get
+        {
             if (_instance == null)
             {
                 GameObject obj = new GameObject("PursuitRegistry");
                 _instance = obj.AddComponent<PursuitRegistry>();
                 DontDestroyOnLoad(obj);
             }
-            return _instance; 
+
+            return _instance;
         }
     }
 
@@ -55,6 +58,7 @@ public class PursuitRegistry : MonoBehaviour
                 pursuingShips.Add(pair.Key);
             }
         }
+
         return pursuingShips;
     }
 

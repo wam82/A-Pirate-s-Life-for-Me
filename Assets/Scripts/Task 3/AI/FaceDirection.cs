@@ -28,6 +28,8 @@ namespace Task_3.AI
                 Vector3 to = GetKinematic(agent).Angular * Vector3.forward;
                 float angleY = Vector3.SignedAngle(from, to, Vector3.up);
                 output.Angular = Quaternion.AngleAxis(angleY, Vector3.up);
+                
+                agent.transform.rotation = Quaternion.Euler(0, agent.transform.rotation.eulerAngles.y, 0);
             }
             else
                 output.Angular = Quaternion.FromToRotation(agent.transform.forward, GetKinematic(agent).Angular * Vector3.forward);
