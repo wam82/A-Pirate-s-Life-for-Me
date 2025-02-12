@@ -30,6 +30,7 @@ namespace Task_3.AI
         public Queue<GameObject> Obstacles = new Queue<GameObject>();
         private Transform _latestTarget;
         private Transform _latestPort;
+        public List<Transform> pursuingPirates = new List<Transform>();
         
         
         [Header("Agent Settings")]
@@ -40,7 +41,6 @@ namespace Task_3.AI
         public float fovDistance;
         public float fovAngle;
         public int segments;
-        
         public Vector3 Velocity { get; set; }
         
         [Header("Target Information")]
@@ -105,11 +105,7 @@ namespace Task_3.AI
                 }
                 if (PursuitRegistry.Instance.IsPursued(transform) && CurrentState != ShipState.Fleeing)
                 {
-                    if (trackedTarget.CompareTag("Port"))
-                    {
-                        _latestPort = trackedTarget;
-                    }
-                    _latestTarget = trackedTarget;
+                    trackedTarget = GetClosestHarbor(transform, _portQueue);
                     CurrentState = ShipState.Fleeing;
                 }
                 
@@ -119,11 +115,6 @@ namespace Task_3.AI
                     _sneakTarget = GetSneakTarget();
                     if (_sneakTarget != null)
                     {
-                        if (trackedTarget.CompareTag("Port"))
-                        {
-                            _latestPort = trackedTarget;
-                        }
-                        _latestTarget = trackedTarget;
                         trackedTarget = _sneakTarget;
                         CurrentState = ShipState.Sneaking;
                     }
@@ -169,15 +160,14 @@ namespace Task_3.AI
 
                         Obstacles.Enqueue(port);
                     }
-                    List<Transform> pursuingPirates = PursuitRegistry.Instance.GetPursuingShip(transform);
+                    pursuingPirates = PursuitRegistry.Instance.GetPursuingShip(transform);
                     if (pursuingPirates.Count > 0)
                     {
-                        trackedTarget = pursuingPirates.First();
                         Move();   
                     }
                     else
                     {
-                        trackedTarget = _latestTarget.CompareTag("Port") ? _latestTarget : _latestPort;
+                        trackedTarget = _latestPort;
                         CurrentState = ShipState.Navigating;
                     }
                     Obstacles.Clear();
@@ -192,9 +182,8 @@ namespace Task_3.AI
                         if (trackedTarget.CompareTag("Port"))
                         {
                             Debug.Log("Somehow Entered");
-                            _latestPort = trackedTarget;
+                            _latestTarget = trackedTarget;
                         }
-                        _latestTarget = trackedTarget;
                         trackedTarget = _sneakTarget;
                         Obstacles.Enqueue(island);
                         foreach (GameObject port in ports)
@@ -211,7 +200,7 @@ namespace Task_3.AI
                     }
                     else
                     {
-                        trackedTarget = _latestTarget.CompareTag("Port") ? _latestTarget : _latestPort;
+                        trackedTarget = _latestPort;
                         CurrentState = ShipState.Navigating;
                     }
                 }
@@ -290,8 +279,6 @@ namespace Task_3.AI
                 float angle = Vector3.Angle(tradeToTarget, pirateToTarget);
                 Debug.DrawRay(transform.position, tradeToTarget, Color.cyan);
                 Debug.DrawRay(pirateTransform.position, pirateToTarget, Color.blue);
-                // Debug.DrawLine(transform.position, _latestPort.position, Color.blue);
-                // Debug.DrawLine(pirateTransform.position, _latestPort.position, Color.cyan); 
                 if (Mathf.Abs(angle) > 10f)
                 {
                     // Debug.Log("Too far apart");
