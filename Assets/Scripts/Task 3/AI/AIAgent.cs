@@ -47,11 +47,17 @@ namespace Task_3.AI
         [SerializeField] private Transform trackedTarget;
         [SerializeField] private Vector3 targetPosition;
         [SerializeField] private Vector3 targetVelocity;
+        [SerializeField] private float targetMaxSpeed;
         private Transform _sneakTarget;
 
         public Transform TrackedTarget
         {
             get => trackedTarget;
+        }
+
+        public float TargetMaxSpeed
+        {
+            get => targetMaxSpeed;
         }
         
         public Vector3 TargetPosition
@@ -94,6 +100,7 @@ namespace Task_3.AI
             {
                 if (debug)
                 {
+                    // Debug.Log(CurrentState);
                     DebugUtils.DrawCircle(transform.position, transform.up, Color.black, viewDistance);
                 }
                 if (PursuitRegistry.Instance.IsPursued(transform) && CurrentState != ShipState.Fleeing)
@@ -258,6 +265,7 @@ namespace Task_3.AI
 
                 Vector3 tradeToTarget = _latestPort.position - transform.position;
                 Vector3 tradeToPirate = pirateTransform.position - transform.position;
+                Vector3 pirateToTarget = _latestPort.position - pirateTransform.position;
 
                 float tradeToTargetDist = tradeToTarget.magnitude;
                 float tradeToPirateDist = tradeToPirate.magnitude;
@@ -274,19 +282,21 @@ namespace Task_3.AI
                 float pirateToTargetDist = Vector3.Distance(pirateTransform.position, TargetPosition);
                 if (pirateToTargetDist > tradeToTargetDist)
                 {
-                    Debug.Log("Not between target");
+                    // Debug.Log("Not between target");
                     continue;
                 } 
-                // Debug.Log("Still physically between me and target");
 
                 // 3. Check if the angle between trade-to-target and trade-to-pirate exceeds threshold
-                float angle = Vector3.Angle(tradeToTarget, tradeToPirate);
-                if (Mathf.Abs(angle) > 45f)
+                float angle = Vector3.Angle(tradeToTarget, pirateToTarget);
+                Debug.DrawRay(transform.position, tradeToTarget, Color.cyan);
+                Debug.DrawRay(pirateTransform.position, pirateToTarget, Color.blue);
+                // Debug.DrawLine(transform.position, _latestPort.position, Color.blue);
+                // Debug.DrawLine(pirateTransform.position, _latestPort.position, Color.cyan); 
+                if (Mathf.Abs(angle) > 10f)
                 {
-                    Debug.Log("Too far apart");
+                    // Debug.Log("Too far apart");
                     continue;
                 } 
-                // Debug.Log("All checks passed");
 
                 // Choose the closest pirate that meets criteria
                 if (tradeToPirateDist < closestDistance)
