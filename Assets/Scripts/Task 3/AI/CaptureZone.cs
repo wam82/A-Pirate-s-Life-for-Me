@@ -9,6 +9,7 @@ namespace Task_3.AI
             if (other.CompareTag("TradeShip"))
             {
                 Debug.Log("Trade ship died!");
+                other.gameObject.SetActive(false);
             }
         }
     }

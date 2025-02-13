@@ -47,7 +47,15 @@ namespace Task_3.AI
             // }
             
             // 4. If you ended up in the docking zone whilst sneaking
+            Vector3 desiredVelocity = agent.latestPort.position - agent.transform.position;
+            float distanceFromPort = desiredVelocity.magnitude;
+            desiredVelocity = desiredVelocity.normalized * agent.maxSpeed;
             
+            if (distanceFromPort <= agent.GetComponent<Arrive>().stopRadius)
+            {
+                agent.SetState(AIAgent.ShipState.Docking);
+                desiredVelocity *= 0;
+            }
             
             return output;
         }

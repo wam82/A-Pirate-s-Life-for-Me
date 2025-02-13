@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Task_3.AI
 {
@@ -23,13 +24,11 @@ namespace Task_3.AI
         
         [Header("Other Objects")]
         public GameObject[] ports;
-        public GameObject[] pirates;
-        public GameObject[] tradeShips;
         public GameObject island;
         public FOVTrigger fovTrigger;
         public Queue<GameObject> Obstacles = new Queue<GameObject>();
         private Transform _latestTarget;
-        private Transform _latestPort;
+        [FormerlySerializedAs("_latestPort")] public Transform latestPort;
         public List<Transform> pursuingPirates = new List<Transform>();
         
         
@@ -120,7 +119,7 @@ namespace Task_3.AI
                     }
                     
                     Obstacles.Enqueue(island);
-                    foreach (GameObject pirate in pirates)
+                    foreach (GameObject pirate in GameManager.Instance.GetPirates())
                     {
                         Obstacles.Enqueue(pirate);
                     }
@@ -167,7 +166,7 @@ namespace Task_3.AI
                     }
                     else
                     {
-                        trackedTarget = _latestPort;
+                        trackedTarget = latestPort;
                         CurrentState = ShipState.Navigating;
                     }
                     Obstacles.Clear();
@@ -200,7 +199,7 @@ namespace Task_3.AI
                     }
                     else
                     {
-                        trackedTarget = _latestPort;
+                        trackedTarget = latestPort;
                         CurrentState = ShipState.Navigating;
                     }
                 }
@@ -248,13 +247,13 @@ namespace Task_3.AI
             Transform bestPirate = null;
             float closestDistance = float.MaxValue;
 
-            foreach (GameObject pirate in pirates)
+            foreach (GameObject pirate in GameManager.Instance.GetPirates())
             {
                 Transform pirateTransform = pirate.transform;
 
-                Vector3 tradeToTarget = _latestPort.position - transform.position;
+                Vector3 tradeToTarget = latestPort.position - transform.position;
                 Vector3 tradeToPirate = pirateTransform.position - transform.position;
-                Vector3 pirateToTarget = _latestPort.position - pirateTransform.position;
+                Vector3 pirateToTarget = latestPort.position - pirateTransform.position;
 
                 float tradeToTargetDist = tradeToTarget.magnitude;
                 float tradeToPirateDist = tradeToPirate.magnitude;
@@ -337,7 +336,7 @@ namespace Task_3.AI
         {
             Transform newTarget = _portQueue.Dequeue();
             trackedTarget = newTarget;
-            _latestPort = newTarget;
+            latestPort = newTarget;
             _portQueue.Enqueue(newTarget);
         }
 
