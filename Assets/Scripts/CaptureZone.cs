@@ -7,6 +7,7 @@ public class CaptureZone : MonoBehaviour
         if (other.CompareTag("TradeShip"))
         {
             Debug.Log("Trade ship died!");
+            GameManager.Instance.RemoveTradeShip(other.gameObject);
             other.gameObject.SetActive(false);
         }
     }

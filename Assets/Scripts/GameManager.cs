@@ -132,15 +132,24 @@ public class GameManager : MonoBehaviour
         pirateShips.Clear();
     }
         
+    public void RemoveTradeShip(GameObject tradeShip)
+    {
+        if (tradeShip != null && tradeShips.Contains(tradeShip))
+        {
+            tradeShips.Remove(tradeShip);
+        }
+    }
     private void CheckGameOver()
     {
         if (tradeShips.Count == 0)
         {
             GameOver("Pirates Win! All trade ships are destroyed.");
+            Time.timeScale = 0;
         }
         else if (gameTimer >= 300f) 
         {
             GameOver("Time's up! Game over.");
+            Time.timeScale = 0;
         }
     }
         

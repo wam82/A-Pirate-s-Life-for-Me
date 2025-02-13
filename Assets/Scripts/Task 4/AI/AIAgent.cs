@@ -215,6 +215,15 @@ namespace Task_4.AI
                     {
                         Obstacles.Enqueue(port);
                     }
+
+                    foreach (GameObject pirate in GameManager.Instance.GetPirates())
+                    {
+                        if (pirate.transform.Equals(transform))
+                        {
+                            continue;
+                        }
+                        Obstacles.Enqueue(pirate);
+                    }
                     Move();
 
                     Obstacles.Clear();
