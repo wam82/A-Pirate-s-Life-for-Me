@@ -9,6 +9,7 @@ namespace Task_3.AI
             if (other.CompareTag("PirateShip"))
             {
                 Debug.Log("Pirate ship died!");
+                PursuitRegistry.Instance.RemovePursuit(other.gameObject.transform);
                 GameManager.Instance.RemovePirate(other.gameObject);
                 other.gameObject.SetActive(false);
             }

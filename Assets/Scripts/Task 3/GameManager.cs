@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +23,12 @@ namespace Task_3
             }
         }
 
-        [SerializeField] private List<GameObject> pirates = new List<GameObject>();
+        [SerializeField] private List<GameObject> pirateShips = new List<GameObject>();
+        [SerializeField] private List<GameObject> tradeShips = new List<GameObject>();
+        [SerializeField] private List<GameObject> harbors = new List<GameObject>();
+
+        private float gameTimer = 0f;
+        private bool gameOver = false;
 
         private void Awake()
         {
@@ -31,38 +37,68 @@ namespace Task_3
                 _instance = this;
                 DontDestroyOnLoad(gameObject);
                 
-                pirates.AddRange(GameObject.FindGameObjectsWithTag("PirateShip"));
+                pirateShips.AddRange(GameObject.FindGameObjectsWithTag("PirateShip"));
+                tradeShips.AddRange(GameObject.FindGameObjectsWithTag("TradeShip"));
             }
             else if (_instance != this)
             {
                 Destroy(gameObject);
             }
         }
-        
+
+        private void Update()
+        {
+            if (!gameOver)
+            {
+                gameTimer += Time.deltaTime;
+                CheckGameOver();
+            }
+        }
+
         public List<GameObject> GetPirates()
         {
-            return new List<GameObject>(pirates);
+            return new List<GameObject>(pirateShips);
         }
         
         public void AddPirate(GameObject pirate)
         {
-            if (pirate != null && !pirates.Contains(pirate))
+            if (pirate != null && !pirateShips.Contains(pirate))
             {
-                pirates.Add(pirate);
+                pirateShips.Add(pirate);
             }
         }
         
         public void RemovePirate(GameObject pirate)
         {
-            if (pirate != null && pirates.Contains(pirate))
+            if (pirate != null && pirateShips.Contains(pirate))
             {
-                pirates.Remove(pirate);
+                pirateShips.Remove(pirate);
             }
         }
         
         public void ClearPirates()
         {
-            pirates.Clear();
+            pirateShips.Clear();
+        }
+        
+        private void CheckGameOver()
+        {
+            if (tradeShips.Count == 0)
+            {
+                GameOver("Pirates Win! All trade ships are destroyed.");
+                Time.timeScale = 0;
+            }
+            else if (gameTimer >= 300f) 
+            {
+                GameOver("Time's up! Game over.");
+                Time.timeScale = 0;
+            }
+        }
+        
+        private void GameOver(string message)
+        {
+            gameOver = true;
+            Debug.Log(message);
         }
     }
 }

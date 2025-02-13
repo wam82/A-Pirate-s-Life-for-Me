@@ -2788,10 +2788,10 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  pirates: []
-  tradeShips: []
   island: {fileID: 0}
   fovTrigger: {fileID: 548426524624135429}
+  latestPort: {fileID: 0}
+  pursuingPirates: []
   maxSpeed: 1.5
   lockY: 1
   debug: 1
@@ -2802,6 +2802,7 @@ MonoBehaviour:
   trackedTarget: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
   targetVelocity: {x: 0, y: 0, z: 0}
+  targetMaxSpeed: 0
 --- !u!114 &7481880395363351573
 MonoBehaviour:
   m_ObjectHideFlags: 0

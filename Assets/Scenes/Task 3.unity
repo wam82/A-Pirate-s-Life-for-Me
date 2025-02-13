@@ -710,11 +710,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &578891106922122772 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5755691210068077445, guid: 1bd633a3e7e7b4096aae8395c0d37823, type: 3}
-  m_PrefabInstance: {fileID: 2251237351934553990}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2251237351934553990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -805,10 +800,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 200291546}
     - target: {fileID: 22095521817808555, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
-      propertyPath: viewDistance
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 22095521817808555, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
       propertyPath: ports.Array.data[0]
       value: 
       objectReference: {fileID: 158768633}
@@ -824,22 +815,6 @@ PrefabInstance:
       propertyPath: ports.Array.data[3]
       value: 
       objectReference: {fileID: 1807543042}
-    - target: {fileID: 22095521817808555, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
-      propertyPath: pirates.Array.data[0]
-      value: 
-      objectReference: {fileID: 578891106922122772}
-    - target: {fileID: 697021434198879294, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
-      propertyPath: slowRadius
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137237304992554202, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
-      propertyPath: seekWeight
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137237304992554202, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
-      propertyPath: velocityMatchWeight
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7854158932524261096, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
       propertyPath: m_LocalPosition.x
       value: -31.2

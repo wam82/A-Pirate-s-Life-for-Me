@@ -3363,21 +3363,21 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  pirates:
-  - {fileID: 0}
-  tradeShips: []
   island: {fileID: 0}
   fovTrigger: {fileID: 0}
+  latestPort: {fileID: 0}
+  pursuingPirates: []
   maxSpeed: 3
   lockY: 1
   debug: 1
-  viewDistance: 12.5
+  viewDistance: 15
   fovDistance: 0
   fovAngle: 0
   segments: 0
   trackedTarget: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
   targetVelocity: {x: 0, y: 0, z: 0}
+  targetMaxSpeed: 0
 --- !u!114 &1506323818493523609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3434,6 +3434,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
+  seekWeight: 0.5
+  velocityMatchWeight: 1
 --- !u!136 &2879536274882238581
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3471,7 +3473,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   bufferDistance: 10
-  arrivalThreshold: 7
+  slowRadius: 12
   crowdingSeparation: 1
 --- !u!1 &8131844556116692452
 GameObject:
