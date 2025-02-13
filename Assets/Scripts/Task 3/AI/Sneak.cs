@@ -20,7 +20,7 @@ namespace Task_3.AI
             Vector3 followOffset = -_leader.forward * bufferDistance;
             Vector3 followTarget = _leader.position + followOffset;
             
-            // Debug.DrawLine(_leader.position, followTarget, Color.red);
+            Debug.DrawLine(_leader.position, followTarget, Color.red);
             // DebugUtils.DrawCircle(_leader.position, Vector3.up, Color.green, slowRadius);
             
             // 2. Following & Arriving (Smooth Arrival)
@@ -30,7 +30,7 @@ namespace Task_3.AI
             float distance = direction.magnitude;
             if (distance < slowRadius && distance > bufferDistance)
             {
-                Debug.Log("In slow distance");
+                // Debug.Log("In slow distance");
                 _desiredSpeed = agent.maxSpeed * (distance / slowRadius);
             }
 

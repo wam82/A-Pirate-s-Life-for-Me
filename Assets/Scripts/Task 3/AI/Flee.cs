@@ -43,13 +43,13 @@ namespace Task_3.AI
             {
                 Debug.Log("Something went wrong. No pirates where found in seek");
             }
-            
+            seekForce = Vector3.ClampMagnitude(seekForce, slowestMaxSpeed);
             // 3. Compute the matching velocity
             Vector3 velocityMatchingForce = averagePirateVelocity - agent.Velocity;
             
             // 4. Blend all forces
             Vector3 combinedForce = (seekWeight * seekForce) + (velocityMatchWeight * velocityMatchingForce);
-            combinedForce = Vector3.ClampMagnitude(combinedForce, slowestMaxSpeed);
+            // combinedForce = Vector3.ClampMagnitude(combinedForce, slowestMaxSpeed);
             output.Linear = combinedForce;
             
             return output;

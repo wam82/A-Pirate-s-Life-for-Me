@@ -749,7 +749,7 @@ PrefabInstance:
       objectReference: {fileID: 1807543042}
     - target: {fileID: 8295804109414631007, guid: 1bd633a3e7e7b4096aae8395c0d37823, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -47.1
+      value: -44.9
       objectReference: {fileID: 0}
     - target: {fileID: 8295804109414631007, guid: 1bd633a3e7e7b4096aae8395c0d37823, type: 3}
       propertyPath: m_LocalPosition.y
@@ -757,7 +757,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8295804109414631007, guid: 1bd633a3e7e7b4096aae8395c0d37823, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -47.2
+      value: -39.4
       objectReference: {fileID: 0}
     - target: {fileID: 8295804109414631007, guid: 1bd633a3e7e7b4096aae8395c0d37823, type: 3}
       propertyPath: m_LocalRotation.w
@@ -828,6 +828,10 @@ PrefabInstance:
       propertyPath: pirates.Array.data[0]
       value: 
       objectReference: {fileID: 578891106922122772}
+    - target: {fileID: 697021434198879294, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
+      propertyPath: slowRadius
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 1137237304992554202, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
       propertyPath: seekWeight
       value: 0.5
@@ -838,7 +842,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7854158932524261096, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -43.3
+      value: -38.3
       objectReference: {fileID: 0}
     - target: {fileID: 7854158932524261096, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
       propertyPath: m_LocalPosition.y
@@ -846,7 +850,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7854158932524261096, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -42.1
+      value: -34.3
       objectReference: {fileID: 0}
     - target: {fileID: 7854158932524261096, guid: 62cc60dbbc16040b8bc7c7e8f2e62575, type: 3}
       propertyPath: m_LocalRotation.w
