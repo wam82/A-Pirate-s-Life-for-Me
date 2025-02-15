@@ -28,11 +28,12 @@ namespace Task_4.AI
         {
             if (other.CompareTag("TradeShip"))
             {
-                agent.SetState(AIAgent.ShipState.Pursuing);
+                // agent.SetState(AIAgent.ShipState.Pursuing);
                 // Debug.Log("Trade ship entered FOV: " + other.name);
                 _tradeShipsInside.Add(other.transform);
             }
         }
+        
         private void OnTriggerExit(Collider other)
         {
             if (other.CompareTag("TradeShip"))
@@ -45,6 +46,11 @@ namespace Task_4.AI
             {
                 agent.SetState(AIAgent.ShipState.TargetLost);
             }
+        }
+        
+        public void ClearTrigger()
+        {
+            _tradeShipsInside.Clear();
         }
 
         // Optional: For debugging or further processing, you can expose the list.

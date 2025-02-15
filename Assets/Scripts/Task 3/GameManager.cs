@@ -60,6 +60,11 @@ namespace Task_3
             return new List<GameObject>(pirateShips);
         }
         
+        public List<GameObject> GetTradeShips()
+        {
+            return new List<GameObject>(tradeShips);
+        }
+        
         public void AddPirate(GameObject pirate)
         {
             if (pirate != null && !pirateShips.Contains(pirate))
@@ -79,6 +84,15 @@ namespace Task_3
         public void ClearPirates()
         {
             pirateShips.Clear();
+        }
+        
+        public void RemoveTradeShip(GameObject tradeShip)
+        {
+            if (tradeShip != null && tradeShips.Contains(tradeShip))
+            {
+                tradeShips.Remove(tradeShip);
+                Debug.LogError(tradeShip.name);
+            }
         }
         
         private void CheckGameOver()

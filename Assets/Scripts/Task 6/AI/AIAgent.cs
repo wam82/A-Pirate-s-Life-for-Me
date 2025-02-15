@@ -228,6 +228,20 @@ namespace Task_6.AI
             // Pirate ship behaviour
             if (transform.CompareTag("PirateShip"))
             {
+                if (fovTrigger.GetClosestTradeShip(transform) != null)
+                {
+                    if (GameManager.Instance.GetTradeShips().Contains(fovTrigger.GetClosestTradeShip(transform).gameObject))
+                    {
+                        CurrentState = ShipState.Pursuing;
+                        Debug.Log(fovTrigger.GetClosestTradeShip(transform).gameObject.name);
+                        // Debug.Log(GameManager.Instance.GetTradeShips().Count);
+                    }
+                    else
+                    {
+                        CurrentState = ShipState.TargetLost;
+                    }
+                }
+                
                 if (CurrentState == ShipState.Wandering)
                 {
                     Obstacles.Enqueue(island);
@@ -252,22 +266,23 @@ namespace Task_6.AI
                 if (CurrentState == ShipState.Pursuing)
                 {
                     Obstacles.Enqueue(island);
-
+                
+                    
                     Transform pursuedShip = fovTrigger.GetClosestTradeShip(transform);
-
                     
                     PursuitRegistry.Instance.RegisterPursuit(transform, pursuedShip);
                     trackedTarget = pursuedShip;
+                
                     Move();
-                    
+                
                     Obstacles.Clear();
-                    
                 }
             
                 if (CurrentState == ShipState.TargetLost)
                 {
                     trackedTarget = null;
                     PursuitRegistry.Instance.RemovePursuit(transform);
+                    fovTrigger.ClearTrigger();
                     CurrentState = ShipState.Wandering;
                 }
 

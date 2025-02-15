@@ -41,6 +41,25 @@ public class PursuitRegistry : MonoBehaviour
         }
     }
 
+    public void DeactivatePursuit(Transform tradeShip)
+    {
+        List<Transform> keysToRemove = new List<Transform>();
+
+        foreach (KeyValuePair<Transform, Transform> pair in _pursuedShips)
+        {
+            if (ReferenceEquals(pair.Value, tradeShip))
+            {
+                keysToRemove.Add(pair.Key);
+            }
+        }
+
+        foreach (Transform key in keysToRemove)
+        {
+            _pursuedShips.Remove(key);
+            Debug.LogWarning("Removed: " + key.gameObject.name);
+        }
+    }
+
     // Check if a trade ship is being pursued
     public bool IsPursued(Transform tradeShip)
     {

@@ -37,7 +37,7 @@ public class ScoreManager : MonoBehaviour
         {
             _teamScore[team] += score;
         }
-        Debug.LogWarning(GetScore(team));
+        // Debug.LogWarning(GetScore(team));
     }
 
     public int GetScore(Team team)

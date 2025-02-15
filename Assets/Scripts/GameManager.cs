@@ -151,6 +151,11 @@ public class GameManager : MonoBehaviour
         return _totalNumberOfPirates;
     }
 
+    public List<GameObject> GetTradeShips()
+    {
+        return new List<GameObject>(tradeShips);
+    }
+
     public float GetTotalTime()
     {
         return totalTime;
@@ -166,6 +171,7 @@ public class GameManager : MonoBehaviour
         if (tradeShip != null && tradeShips.Contains(tradeShip))
         {
             tradeShips.Remove(tradeShip);
+            Debug.LogError(tradeShip.name);
         }
     }
     private void CheckGameOver()
@@ -289,6 +295,8 @@ public class GameManager : MonoBehaviour
         {
             Transform fovTransform;
             GameObject fovObject;
+            // Transform captureTransform;
+            // GameObject captureObject;
             switch (sceneName)
             {
                 case "Task 4":
@@ -370,6 +378,18 @@ public class GameManager : MonoBehaviour
                         meshGenerator.agent = pirate.GetComponent<AIAgent>();
                     }
                     
+                    // captureTransform = pirate.transform.Find("CaptureZone");
+                    // if (captureTransform == null)
+                    // {
+                    //     Debug.LogError("No CaptureZone transform found.");
+                    //     continue;
+                    // }
+                    // captureObject = captureTransform.gameObject;
+                    // if (!captureObject.GetComponent<CaptureZone>())
+                    // {
+                    //     captureObject.AddComponent<CaptureZone>();
+                    // }
+                    
                     break;
                 case "Task 5":
                     // Attach all behavioural scripts to each pirates
@@ -450,6 +470,18 @@ public class GameManager : MonoBehaviour
                         Task_5.AI.MeshGenerator meshGenerator = fovObject.GetComponent<Task_5.AI.MeshGenerator>();
                         meshGenerator.agent = pirate.GetComponent<Task_5.AI.AIAgent>();
                     }
+                    
+                    // captureTransform = pirate.transform.Find("CaptureZone");
+                    // if (captureTransform == null)
+                    // {
+                    //     Debug.LogError("No CaptureZone transform found.");
+                    //     continue;
+                    // }
+                    // captureObject = captureTransform.gameObject;
+                    // if (!captureObject.GetComponent<CaptureZone>())
+                    // {
+                    //     captureObject.AddComponent<CaptureZone>();
+                    // }
                     
                     break;
             }

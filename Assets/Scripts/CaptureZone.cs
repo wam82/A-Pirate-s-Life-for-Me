@@ -8,6 +8,7 @@ public class CaptureZone : MonoBehaviour
         {
             Debug.Log("Trade ship died!");
             GameManager.Instance.RemoveTradeShip(other.gameObject);
+            PursuitRegistry.Instance.DeactivatePursuit(other.gameObject.transform);
             other.gameObject.SetActive(false);
         }
     }
