@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Task_4.AI;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,6 +26,13 @@ public class GameManager : MonoBehaviour
             return _instance;
         }
     }
+    
+    [Header("Game Settings")]
+    [SerializeField] private float totalTime;
+    [SerializeField] private List<Material> materials;
+    [SerializeField] private GameObject tradeShipPrefab;
+    [SerializeField] private float spawnRadius;
+    private int _totalNumberOfPirates;
     
     [Header("Trade Ship Settings")]
     [SerializeField] private float tradeShipMaxSpeed; // 3
@@ -59,13 +65,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> harbors = new List<GameObject>();
     [SerializeField] private GameObject island;
     
+    
     [Header("General Ship Settings")]
     [SerializeField] private bool lockY;
     [SerializeField] private bool debug;
+    private Transform _fovTransform;
+    private GameObject _fovObject;
     
 
-    private float gameTimer = 0f;
-    private bool gameOver = false;
+    private float _gameTimer;
+    private bool _gameOver;
 
     private void Awake()
     {
@@ -85,23 +94,23 @@ public class GameManager : MonoBehaviour
         }
 
         // Only persist if we want this GameManager to be the same across scenes
-        if (ShouldPersistAcrossScenes(SceneManager.GetActiveScene().name))
-        {
-            DontDestroyOnLoad(gameObject);
-        }
+        // if (ShouldPersistAcrossScenes(SceneManager.GetActiveScene().name))
+        // {
+        //     DontDestroyOnLoad(gameObject);
+        // }
     }
     
     private bool ShouldPersistAcrossScenes(string sceneName)
     {
         // Define scenes where GameManager should persist
-        return sceneName == "MainMenu" || sceneName == "Task 4";
+        return sceneName == "MainMenu" || sceneName == "Task 4" || sceneName == "Task 5";
     }
 
     private void Update()
     {
-        if (!gameOver)
+        if (!_gameOver)
         {
-            gameTimer += Time.deltaTime;
+            _gameTimer += Time.deltaTime;
             CheckGameOver();
         }
     }
@@ -131,6 +140,26 @@ public class GameManager : MonoBehaviour
     {
         pirateShips.Clear();
     }
+
+    public int GetAlivePirates()
+    {
+        return pirateShips.Count;
+    }
+
+    public int GetTotalPirates()
+    {
+        return _totalNumberOfPirates;
+    }
+
+    public float GetTotalTime()
+    {
+        return totalTime;
+    }
+
+    public float GetRemainingTime()
+    {
+        return totalTime - _gameTimer;
+    }
         
     public void RemoveTradeShip(GameObject tradeShip)
     {
@@ -146,7 +175,7 @@ public class GameManager : MonoBehaviour
             GameOver("Pirates Win! All trade ships are destroyed.");
             Time.timeScale = 0;
         }
-        else if (gameTimer >= 300f) 
+        else if (_gameTimer >= totalTime) 
         {
             GameOver("Time's up! Game over.");
             Time.timeScale = 0;
@@ -155,7 +184,7 @@ public class GameManager : MonoBehaviour
         
     private void GameOver(string message)
     {
-        gameOver = true;
+        _gameOver = true;
         Debug.Log(message);
     }
 
@@ -164,21 +193,102 @@ public class GameManager : MonoBehaviour
         pirateShips.Clear();
         tradeShips.Clear();
         harbors.Clear();
+
+       
         
         pirateShips.AddRange(GameObject.FindGameObjectsWithTag("PirateShip"));
-        tradeShips.AddRange(GameObject.FindGameObjectsWithTag("TradeShip"));
         harbors.AddRange(GameObject.FindGameObjectsWithTag("Port"));
+        if (materials.Count <= 0)
+        {
+            tradeShips.AddRange(GameObject.FindGameObjectsWithTag("TradeShip"));
+        }
+        else
+        {
+            foreach (GameObject harbor in harbors)
+            {
+                Renderer renderer = harbor.GetComponent<Renderer>();
+
+                if (renderer != null)
+                {
+                    if (materials.Contains(renderer.sharedMaterial))
+                    {
+                        // Debug.Log($"Harbor '{harbor.name}' contains material '{renderer.material.name}'");
+                        GameObject tradeShip = Spawn(harbor, renderer.sharedMaterial);
+                        if (tradeShip == null || harbor == null)
+                        {
+                            Debug.LogWarning("Could not find trade ship.");
+                        }
+                        else
+                        {
+                            CreateTeam(harbor, tradeShip);
+                        }
+                    }
+                }
+            }
+            tradeShips.AddRange(GameObject.FindGameObjectsWithTag("TradeShip"));
+        }
         island = GameObject.FindGameObjectWithTag("Island");
+        
+        _totalNumberOfPirates = pirateShips.Count;
         
         string sceneName = SceneManager.GetActiveScene().name;
 
         ApplyScripts(sceneName);
+    }
+    private void CreateTeam(GameObject harbor, GameObject tradeShip)
+    {
+        Team team = ScriptableObject.CreateInstance<Team>();
+        team.Harbor = harbor;
+        team.TradeShip = tradeShip;
+        ScoreManager.Instance.AddTeam(team);
+    }
+
+    public GameObject Spawn(GameObject harbor, Material material)
+    {
+        Vector3 spawnPosition = GetSpawnPoint(harbor.transform.position, spawnRadius);
+        GameObject tradeShip = Instantiate(tradeShipPrefab, spawnPosition, Quaternion.identity);
+        Transform sails = tradeShip.transform.Find("Sails");
+        if (sails != null)
+        {
+            ChangeColour(sails, material);
+        }
+        else
+        {
+            Debug.LogWarning("Could not find sail");
+        }
+        return tradeShip;
+    }
+
+    public void ChangeColour(Transform sail, Material material)
+    {
+        foreach (Transform child in sail)
+        {
+            child.GetComponent<Renderer>().material = material;
+        }
+    }
+    public void Respawn(Team team)
+    {
+        Vector3 spawnPosition = GetSpawnPoint(team.Harbor.transform.position, spawnRadius);
+        Instantiate(team.TradeShip, spawnPosition, Quaternion.identity);
+    }
+
+    private static Vector3 GetSpawnPoint(Vector3 harborPosition, float radius)
+    {
+        float angle = Random.Range(0f, 360f);
+        float radians = angle * Mathf.Deg2Rad;
+        
+        float x = Mathf.Cos(radians) * radius;
+        float z = Mathf.Sin(radians) * radius;
+        
+        return new Vector3(harborPosition.x + x, harborPosition.y, harborPosition.z + z);
     }
 
     private void ApplyScripts(string sceneName)
     {
         foreach (GameObject pirate in pirateShips)
         {
+            Transform fovTransform;
+            GameObject fovObject;
             switch (sceneName)
             {
                 case "Task 4":
@@ -226,14 +336,14 @@ public class GameManager : MonoBehaviour
                     }
                     
                     // Attach all scripts related to the behaviour of the FOV field 
-                    Transform fovTransform = pirate.transform.Find("FOV");
+                    fovTransform = pirate.transform.Find("FOV");
                     if (fovTransform == null)
                     {
                         Debug.LogError("No FOV transform found.");
                         continue;
                     }
                     
-                    GameObject fovObject = fovTransform.gameObject;
+                    fovObject = fovTransform.gameObject;
                     if (!fovObject.GetComponent<FOVTrigger>())
                     {
                         fovObject.AddComponent<FOVTrigger>();
@@ -244,6 +354,8 @@ public class GameManager : MonoBehaviour
                         }
                         FOVTrigger fovTrigger = fovObject.GetComponent<FOVTrigger>();
                         fovTrigger.agent = pirate.GetComponent<AIAgent>();
+                        AIAgent pirateAI = pirate.GetComponent<AIAgent>();
+                        pirateAI.fovTrigger = fovObject.GetComponent<FOVTrigger>();
                     }
                     
                     if (!fovObject.GetComponent<MeshGenerator>())
@@ -257,8 +369,87 @@ public class GameManager : MonoBehaviour
                         MeshGenerator meshGenerator = fovObject.GetComponent<MeshGenerator>();
                         meshGenerator.agent = pirate.GetComponent<AIAgent>();
                     }
-                    AIAgent pirateAI = pirate.GetComponent<AIAgent>();
-                    pirateAI.fovTrigger = fovObject.GetComponent<FOVTrigger>();
+                    
+                    break;
+                case "Task 5":
+                    // Attach all behavioural scripts to each pirates
+                    if (!pirate.GetComponent<Task_5.AI.AIAgent>())
+                    {
+                        pirate.AddComponent<Task_5.AI.AIAgent>();
+                        Task_5.AI.AIAgent aiAgent = pirate.GetComponent<Task_5.AI.AIAgent>();
+                        aiAgent.ports = harbors;
+                        aiAgent.island = island;
+                        aiAgent.maxSpeed = pirateShipMaxSpeed;
+                        aiAgent.lockY = lockY;
+                        aiAgent.fovDistance = fovDistance;
+                        aiAgent.fovAngle = fovAngle;
+                        aiAgent.segments = segments;
+                    }
+                    
+                    if (!pirate.GetComponent<Task_5.AI.Avoidance>())
+                    {
+                        pirate.AddComponent<Task_5.AI.Avoidance>();
+                        Task_5.AI.Avoidance aiAgent = pirate.GetComponent<Task_5.AI.Avoidance>();
+                        aiAgent.avoidanceRadius = pirateShipAvoidanceRadius;
+                        aiAgent.avoidanceFactor = pirateShipAvoidanceFactor;
+                        aiAgent.debug = debug;
+                    }
+                    
+                    if (!pirate.GetComponent<Task_5.AI.FaceDirection>())
+                    {
+                        pirate.AddComponent<Task_5.AI.FaceDirection>();
+                    }
+                    
+                    if (!pirate.GetComponent<Task_5.AI.Pursue>())
+                    {
+                        pirate.AddComponent<Task_5.AI.Pursue>();
+                    }
+                    
+                    if (!pirate.GetComponent<Task_5.AI.Wander>())
+                    {
+                        pirate.AddComponent<Task_5.AI.Wander>();
+                        Task_5.AI.Wander aiAgent = pirate.GetComponent<Task_5.AI.Wander>();
+                        aiAgent.wanderDegrees = wanderDegrees;
+                        aiAgent.wanderInterval = wanderInterval;
+                        aiAgent.orbitRadius = orbitRadius;
+                        aiAgent.correctionFactor = correctionFactor;
+                    }
+                    
+                    // Attach all scripts related to the behaviour of the FOV field 
+                    fovTransform = pirate.transform.Find("FOV");
+                    if (fovTransform == null)
+                    {
+                        Debug.LogError("No FOV transform found.");
+                        continue;
+                    }
+                    
+                    fovObject = fovTransform.gameObject;
+                    if (!fovObject.GetComponent<Task_5.AI.FOVTrigger>())
+                    {
+                        fovObject.AddComponent<Task_5.AI.FOVTrigger>();
+                        if (!pirate.GetComponent<Task_5.AI.AIAgent>())
+                        {
+                            Debug.LogError("No AIAgent component found for FOVTrigger.");
+                            continue;
+                        }
+                        Task_5.AI.FOVTrigger fovTrigger = fovObject.GetComponent<Task_5.AI.FOVTrigger>();
+                        fovTrigger.agent = pirate.GetComponent<Task_5.AI.AIAgent>();
+                        // fovTrigger.agent = pirate.GetComponent<Task_5.AI.AIAgent>();
+                        Task_5.AI.AIAgent pirateAI = pirate.GetComponent<Task_5.AI.AIAgent>();
+                        pirateAI.fovTrigger = fovObject.GetComponent<Task_5.AI.FOVTrigger>();
+                    }
+                    
+                    if (!fovObject.GetComponent<Task_5.AI.MeshGenerator>())
+                    {
+                        fovObject.AddComponent<Task_5.AI.MeshGenerator>();
+                        if (!pirate.GetComponent<Task_5.AI.AIAgent>())
+                        {
+                            Debug.LogError("No AIAgent component found for MeshGenerator.");
+                            continue;
+                        }
+                        Task_5.AI.MeshGenerator meshGenerator = fovObject.GetComponent<Task_5.AI.MeshGenerator>();
+                        meshGenerator.agent = pirate.GetComponent<Task_5.AI.AIAgent>();
+                    }
                     
                     break;
             }
@@ -315,6 +506,62 @@ public class GameManager : MonoBehaviour
                         aiAgent.bufferDistance = sneakBufferDistance;
                         aiAgent.slowRadius = sneakSlowRadius;
                         aiAgent.crowdingSeparation = sneakCrowdingSeparation;
+                    }
+                    break;
+                case "Task 5":
+                    if (!tradeShip.GetComponent<Task_5.AI.AIAgent>())
+                    {
+                        tradeShip.AddComponent<Task_5.AI.AIAgent>();
+                        Task_5.AI.AIAgent aiAgent = tradeShip.GetComponent<Task_5.AI.AIAgent>();
+                        aiAgent.ports = harbors;
+                        aiAgent.island = island;
+                        aiAgent.maxSpeed = tradeShipMaxSpeed;
+                        aiAgent.lockY = lockY;
+                        aiAgent.viewDistance = viewDistance;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_5.AI.Arrive>())
+                    {
+                        tradeShip.AddComponent<Task_5.AI.Arrive>();
+                        Task_5.AI.Arrive aiAgent = tradeShip.GetComponent<Task_5.AI.Arrive>();
+                        aiAgent.slowRadius = arriveSlowRadius;
+                        aiAgent.stopRadius = arriveStopRadius;
+                    }
+                    
+                    if (!tradeShip.GetComponent<Task_5.AI.Avoidance>())
+                    {
+                        tradeShip.AddComponent<Task_5.AI.Avoidance>();
+                        Task_5.AI.Avoidance aiAgent = tradeShip.GetComponent<Task_5.AI.Avoidance>();
+                        aiAgent.avoidanceRadius = tradeShipAvoidanceRadius;
+                        aiAgent.avoidanceFactor = tradeShipAvoidanceFactor;
+                        aiAgent.debug = debug;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_5.AI.FaceDirection>())
+                    {
+                        tradeShip.AddComponent<Task_5.AI.FaceDirection>();
+                    }
+
+                    if (!tradeShip.GetComponent<Task_5.AI.Flee>())
+                    {
+                        tradeShip.AddComponent<Task_5.AI.Flee>();
+                        Task_5.AI.Flee aiAgent = tradeShip.GetComponent<Task_5.AI.Flee>();
+                        aiAgent.seekWeight = seekWeight;
+                        aiAgent.velocityMatchWeight = velocityMatchWeight;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_5.AI.Sneak>())
+                    {
+                        tradeShip.AddComponent<Task_5.AI.Sneak>();
+                        Task_5.AI.Sneak aiAgent = tradeShip.GetComponent<Task_5.AI.Sneak>();
+                        aiAgent.bufferDistance = sneakBufferDistance;
+                        aiAgent.slowRadius = sneakSlowRadius;
+                        aiAgent.crowdingSeparation = sneakCrowdingSeparation;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_5.AI.Seek>())
+                    {
+                        tradeShip.AddComponent<Task_5.AI.Seek>();
                     }
                     break;
             }

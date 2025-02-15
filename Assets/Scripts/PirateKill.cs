@@ -9,6 +9,7 @@ public class PirateKill : MonoBehaviour
             Debug.Log("Pirate ship died!");
             PursuitRegistry.Instance.RemovePursuit(other.gameObject.transform);
             GameManager.Instance.RemovePirate(other.gameObject);
+            ScoreManager.Instance.AddPoints(transform.parent.gameObject, 25);
             other.gameObject.SetActive(false);
         }
     }

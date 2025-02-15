@@ -44,6 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 926e1ee2658544b49a9ecb4f1f92f079, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalTime: 300
+  materials:
+  - {fileID: 2100000, guid: eaadf635f700d01459b092e981549f2e, type: 2}
+  - {fileID: 2100000, guid: dee58be44d7323842a62cc8fabc23039, type: 2}
+  - {fileID: 2100000, guid: 5c82265fba5674c1cb7b071af1851cf8, type: 2}
+  - {fileID: 2100000, guid: 9439f89d459194a1fa11af1bbae0facd, type: 2}
+  tradeShipPrefab: {fileID: 2937683672836335304, guid: b99b4cf06b32c44c9b652aa9eacf188a, type: 3}
   tradeShipMaxSpeed: 3
   viewDistance: 15
   tradeShipAvoidanceRadius: 2.5
@@ -60,7 +67,7 @@ MonoBehaviour:
   fovAngle: 120
   segments: 20
   pirateShipAvoidanceRadius: 4
-  pirateShipAvoidanceFactor: 2
+  pirateShipAvoidanceFactor: 1
   wanderDegrees: 90
   wanderInterval: 3
   orbitRadius: 15
