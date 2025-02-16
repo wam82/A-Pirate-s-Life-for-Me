@@ -56,7 +56,7 @@ public class PursuitRegistry : MonoBehaviour
         foreach (Transform key in keysToRemove)
         {
             _pursuedShips.Remove(key);
-            Debug.LogWarning("Removed: " + key.gameObject.name);
+            // Debug.LogWarning("Removed: " + key.gameObject.name);
         }
     }
 

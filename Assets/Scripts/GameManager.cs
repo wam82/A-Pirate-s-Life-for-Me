@@ -185,7 +185,7 @@ public class GameManager : MonoBehaviour
         if (tradeShip != null && tradeShips.Contains(tradeShip))
         {
             tradeShips.Remove(tradeShip);
-            Debug.LogError(tradeShip.name);
+            // Debug.LogError(tradeShip.name);
         }
     }
     private void CheckGameOver()
