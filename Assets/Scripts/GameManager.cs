@@ -470,19 +470,86 @@ public class GameManager : MonoBehaviour
                         Task_5.AI.MeshGenerator meshGenerator = fovObject.GetComponent<Task_5.AI.MeshGenerator>();
                         meshGenerator.agent = pirate.GetComponent<Task_5.AI.AIAgent>();
                     }
+                    break;
+                case "Task 6":
+                    // Attach all behavioural scripts to each pirates
+                    if (!pirate.GetComponent<Task_6.AI.AIAgent>())
+                    {
+                        pirate.AddComponent<Task_6.AI.AIAgent>();
+                        Task_6.AI.AIAgent aiAgent = pirate.GetComponent<Task_6.AI.AIAgent>();
+                        aiAgent.ports = harbors;
+                        aiAgent.island = island;
+                        aiAgent.maxSpeed = pirateShipMaxSpeed;
+                        aiAgent.lockY = lockY;
+                        aiAgent.fovDistance = fovDistance;
+                        aiAgent.fovAngle = fovAngle;
+                        aiAgent.segments = segments;
+                    }
                     
-                    // captureTransform = pirate.transform.Find("CaptureZone");
-                    // if (captureTransform == null)
-                    // {
-                    //     Debug.LogError("No CaptureZone transform found.");
-                    //     continue;
-                    // }
-                    // captureObject = captureTransform.gameObject;
-                    // if (!captureObject.GetComponent<CaptureZone>())
-                    // {
-                    //     captureObject.AddComponent<CaptureZone>();
-                    // }
+                    if (!pirate.GetComponent<Task_6.AI.Avoidance>())
+                    {
+                        pirate.AddComponent<Task_6.AI.Avoidance>();
+                        Task_6.AI.Avoidance aiAgent = pirate.GetComponent<Task_6.AI.Avoidance>();
+                        aiAgent.avoidanceRadius = pirateShipAvoidanceRadius;
+                        aiAgent.avoidanceFactor = pirateShipAvoidanceFactor;
+                        aiAgent.debug = debug;
+                    }
                     
+                    if (!pirate.GetComponent<Task_6.AI.FaceDirection>())
+                    {
+                        pirate.AddComponent<Task_6.AI.FaceDirection>();
+                    }
+                    
+                    if (!pirate.GetComponent<Task_6.AI.Pursue>())
+                    {
+                        pirate.AddComponent<Task_6.AI.Pursue>();
+                    }
+                    
+                    if (!pirate.GetComponent<Task_6.AI.Wander>())
+                    {
+                        pirate.AddComponent<Task_6.AI.Wander>();
+                        Task_6.AI.Wander aiAgent = pirate.GetComponent<Task_6.AI.Wander>();
+                        aiAgent.wanderDegrees = wanderDegrees;
+                        aiAgent.wanderInterval = wanderInterval;
+                        aiAgent.orbitRadius = orbitRadius;
+                        aiAgent.correctionFactor = correctionFactor;
+                    }
+                    
+                    // Attach all scripts related to the behaviour of the FOV field 
+                    fovTransform = pirate.transform.Find("FOV");
+                    if (fovTransform == null)
+                    {
+                        Debug.LogError("No FOV transform found.");
+                        continue;
+                    }
+                    
+                    fovObject = fovTransform.gameObject;
+                    if (!fovObject.GetComponent<Task_6.AI.FOVTrigger>())
+                    {
+                        fovObject.AddComponent<Task_6.AI.FOVTrigger>();
+                        if (!pirate.GetComponent<Task_6.AI.AIAgent>())
+                        {
+                            Debug.LogError("No AIAgent component found for FOVTrigger.");
+                            continue;
+                        }
+                        Task_6.AI.FOVTrigger fovTrigger = fovObject.GetComponent<Task_6.AI.FOVTrigger>();
+                        fovTrigger.agent = pirate.GetComponent<Task_6.AI.AIAgent>();
+                        // fovTrigger.agent = pirate.GetComponent<Task_6.AI.AIAgent>();
+                        Task_6.AI.AIAgent pirateAI = pirate.GetComponent<Task_6.AI.AIAgent>();
+                        pirateAI.fovTrigger = fovObject.GetComponent<Task_6.AI.FOVTrigger>();
+                    }
+                    
+                    if (!fovObject.GetComponent<Task_6.AI.MeshGenerator>())
+                    {
+                        fovObject.AddComponent<Task_6.AI.MeshGenerator>();
+                        if (!pirate.GetComponent<Task_6.AI.AIAgent>())
+                        {
+                            Debug.LogError("No AIAgent component found for MeshGenerator.");
+                            continue;
+                        }
+                        Task_6.AI.MeshGenerator meshGenerator = fovObject.GetComponent<Task_6.AI.MeshGenerator>();
+                        meshGenerator.agent = pirate.GetComponent<Task_6.AI.AIAgent>();
+                    }
                     break;
             }
         }
@@ -594,6 +661,62 @@ public class GameManager : MonoBehaviour
                     if (!tradeShip.GetComponent<Task_5.AI.Seek>())
                     {
                         tradeShip.AddComponent<Task_5.AI.Seek>();
+                    }
+                    break;
+                case "Task 6":
+                    if (!tradeShip.GetComponent<Task_6.AI.AIAgent>())
+                    {
+                        tradeShip.AddComponent<Task_6.AI.AIAgent>();
+                        Task_6.AI.AIAgent aiAgent = tradeShip.GetComponent<Task_6.AI.AIAgent>();
+                        aiAgent.ports = harbors;
+                        aiAgent.island = island;
+                        aiAgent.maxSpeed = tradeShipMaxSpeed;
+                        aiAgent.lockY = lockY;
+                        aiAgent.viewDistance = viewDistance;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_6.AI.Arrive>())
+                    {
+                        tradeShip.AddComponent<Task_6.AI.Arrive>();
+                        Task_6.AI.Arrive aiAgent = tradeShip.GetComponent<Task_6.AI.Arrive>();
+                        aiAgent.slowRadius = arriveSlowRadius;
+                        aiAgent.stopRadius = arriveStopRadius;
+                    }
+                    
+                    if (!tradeShip.GetComponent<Task_6.AI.Avoidance>())
+                    {
+                        tradeShip.AddComponent<Task_6.AI.Avoidance>();
+                        Task_6.AI.Avoidance aiAgent = tradeShip.GetComponent<Task_6.AI.Avoidance>();
+                        aiAgent.avoidanceRadius = tradeShipAvoidanceRadius;
+                        aiAgent.avoidanceFactor = tradeShipAvoidanceFactor;
+                        aiAgent.debug = debug;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_6.AI.FaceDirection>())
+                    {
+                        tradeShip.AddComponent<Task_6.AI.FaceDirection>();
+                    }
+
+                    if (!tradeShip.GetComponent<Task_6.AI.Flee>())
+                    {
+                        tradeShip.AddComponent<Task_6.AI.Flee>();
+                        Task_6.AI.Flee aiAgent = tradeShip.GetComponent<Task_6.AI.Flee>();
+                        aiAgent.seekWeight = seekWeight;
+                        aiAgent.velocityMatchWeight = velocityMatchWeight;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_6.AI.Sneak>())
+                    {
+                        tradeShip.AddComponent<Task_6.AI.Sneak>();
+                        Task_6.AI.Sneak aiAgent = tradeShip.GetComponent<Task_6.AI.Sneak>();
+                        aiAgent.bufferDistance = sneakBufferDistance;
+                        aiAgent.slowRadius = sneakSlowRadius;
+                        aiAgent.crowdingSeparation = sneakCrowdingSeparation;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_6.AI.Seek>())
+                    {
+                        tradeShip.AddComponent<Task_6.AI.Seek>();
                     }
                     break;
             }
