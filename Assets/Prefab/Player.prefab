@@ -779,8 +779,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  rotationSpeed: 5
+  rotationSpeed: 7.5
   cameraPivot: {fileID: 2449306051841859510}
+  stopRadius: 5
+  dockingTime: 2
+  minDistance: 10
+  targetObjects: []
 --- !u!1 &1535327519893835493
 GameObject:
   m_ObjectHideFlags: 0

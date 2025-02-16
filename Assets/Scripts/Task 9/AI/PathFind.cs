@@ -19,7 +19,7 @@ namespace Task_9.AI
                 agent.SetState(AIAgent.ShipState.Fishing);
                 desiredVelocity *= 0;
             }
-            else if (distance < fishingRadius && agent.TrackedTarget.CompareTag("Port"))
+            else if (distance < fishingRadius && (agent.TrackedTarget.CompareTag("Port") || agent.TrackedTarget.CompareTag("Player")))
             {
                 agent.SetState(AIAgent.ShipState.Fished);
                 desiredVelocity *= 0;

@@ -26,7 +26,7 @@ namespace Task_9.AI
         
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("TradeShip"))
+            if (other.CompareTag("TradeShip") || other.CompareTag("Player"))
             {
                 // agent.SetState(AIAgent.ShipState.Pursuing);
                 // Debug.Log("Trade ship entered FOV: " + other.name);
@@ -35,7 +35,7 @@ namespace Task_9.AI
         }
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("TradeShip"))
+            if (other.CompareTag("TradeShip") || other.CompareTag("Player"))
             {
                 // Debug.Log("Trade ship exited FOV: " + other.name);
                 _tradeShipsInside.Remove(other.transform);

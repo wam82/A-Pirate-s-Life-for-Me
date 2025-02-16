@@ -4,18 +4,12 @@ using UnityEngine;
 
 public class BarrelCollision : MonoBehaviour
 {
-    private bool _isDestroyed = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_isDestroyed)
-        {
-            return;
-        }
-        
         GameObject otherObject = other.gameObject;
 
-        if (otherObject.CompareTag("TradeShip") || otherObject.CompareTag("PirateShip") || otherObject.CompareTag("FishingShip"))
+        if (otherObject.CompareTag("TradeShip") || otherObject.CompareTag("PirateShip") || otherObject.CompareTag("FishingShip") || otherObject.CompareTag("Player"))
         {
             DestroyShip(otherObject);
         }
@@ -30,7 +24,7 @@ public class BarrelCollision : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            if (ship.CompareTag("TradeShip"))
+            if (ship.CompareTag("TradeShip") || ship.CompareTag("Player"))
             {
                 GameManager.Instance.RemoveTradeShip(ship);
             }
@@ -44,7 +38,6 @@ public class BarrelCollision : MonoBehaviour
             }
         }
         
-        ship.SetActive(false);
-        _isDestroyed = true;
+        // ship.SetActive(false);
     }
 }

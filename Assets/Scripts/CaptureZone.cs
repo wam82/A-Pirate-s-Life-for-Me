@@ -4,12 +4,11 @@ public class CaptureZone : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("TradeShip"))
+        if (other.CompareTag("TradeShip") || other.CompareTag("Player"))
         {
-            Debug.Log("Trade ship died!");
             GameManager.Instance.RemoveTradeShip(other.gameObject);
             PursuitRegistry.Instance.DeactivatePursuit(other.gameObject.transform);
-            other.gameObject.SetActive(false);
+            // other.gameObject.SetActive(false);
         }
     }
 }

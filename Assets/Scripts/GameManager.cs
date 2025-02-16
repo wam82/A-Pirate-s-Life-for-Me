@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject fishingShipPrefab;
     [SerializeField] private GameObject scoreManagerPrefab;
     [SerializeField] private GameObject pathPrefab;
+    [SerializeField] private GameObject spectatorCamera;
     [NonSerialized] private Path pathTemplate;
     [NonSerialized] public ScoreManager scoreManager;
     private int _totalNumberOfPirates;
@@ -88,6 +90,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float barrelWanderInterval;
     [SerializeField] private float barrelWanderDegree;
     [SerializeField] private float barrelCorrectionFactor;
+    
+    [Header("Player Settings")]
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject playerHarbor;
     
     [Header("Objects in Scene")]
     [SerializeField] private List<GameObject> pirateShips = new List<GameObject>();
@@ -143,7 +149,6 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        DebugUtils.DrawCircle(island.transform.position, Vector3.up, Color.blue, barrelRadius);
         if (!_gameOver)
         {
             _gameTimer += Time.deltaTime;
@@ -166,6 +171,14 @@ public class GameManager : MonoBehaviour
         if (pirate != null && !pirateShips.Contains(pirate))
         {
             pirateShips.Add(pirate);
+        }
+    }
+    
+    public void AddTradeShip(GameObject trade)
+    {
+        if (trade != null && !tradeShips.Contains(trade))
+        {
+            tradeShips.Add(trade);
         }
     }
         
@@ -228,8 +241,42 @@ public class GameManager : MonoBehaviour
     {
         if (tradeShip != null && tradeShips.Contains(tradeShip))
         {
+            if (tradeShip.CompareTag("TradeShip") && SceneManager.GetActiveScene().name == "Task 10")
+            {
+                tradeShip.GetComponent<Task_9.AI.AIAgent>().SetState(Task_9.AI.AIAgent.ShipState.Waiting);
+            }
+            tradeShip.SetActive(false);
             tradeShips.Remove(tradeShip);
+            if (SceneManager.GetActiveScene().name == "Task 10")
+            {
+                StartCoroutine(Respawn(tradeShip));
+            }
         }
+    }
+
+    IEnumerator Respawn(GameObject ship)
+    {
+        if (spectatorCamera != null && ship.CompareTag("Player"))
+        {
+            spectatorCamera.SetActive(true);
+        }
+        
+        Vector3 spawnPosition = scoreManager.FindTeam(ship).Harbor.transform.Find("SpawnPoint").position;
+        ship.transform.position = spawnPosition;
+        
+        scoreManager.AddPoints(ship, -10);
+        
+        yield return new WaitForSeconds(5f);
+        if (ship.CompareTag("TradeShip") && SceneManager.GetActiveScene().name == "Task 10")
+        {
+            ship.GetComponent<Task_9.AI.AIAgent>().SetState(Task_9.AI.AIAgent.ShipState.Navigating);
+        }
+        if (spectatorCamera != null && ship.CompareTag("Player"))
+        {
+            spectatorCamera.SetActive(false);
+        }
+        AddTradeShip(ship);
+        ship.SetActive(true);
     }
     private void CheckGameOver()
     {
@@ -293,9 +340,16 @@ public class GameManager : MonoBehaviour
                 }
             }
             tradeShips.AddRange(GameObject.FindGameObjectsWithTag("TradeShip"));
-            
-            
             fishingShips.AddRange(GameObject.FindGameObjectsWithTag("FishingShip"));
+            if (playerHarbor != null && playerPrefab != null)
+            {
+                harbors.Add(playerHarbor);
+                Vector3 spawnPosition = playerHarbor.transform.Find("SpawnPoint").position;
+                GameObject player = Instantiate(playerPrefab, spawnPosition, Quaternion.Euler(0, 180, 0));
+                player.GetComponent<PlayerController>().targetObjects = harbors;
+                tradeShips.Add(player);
+                CreateTeam(playerHarbor, player);
+            }
         }
         island = GameObject.FindGameObjectWithTag("Island");
         
@@ -369,8 +423,8 @@ public class GameManager : MonoBehaviour
                     {
                         fishingShip.AddComponent<Task_7.AI.Avoidance>();
                         Task_7.AI.Avoidance aiAgent = fishingShip.GetComponent<Task_7.AI.Avoidance>();
-                        aiAgent.avoidanceRadius = tradeShipAvoidanceRadius;
-                        aiAgent.avoidanceFactor = tradeShipAvoidanceFactor;
+                        aiAgent.avoidanceRadius = fishermanAvoidanceRadius;
+                        aiAgent.avoidanceFactor = fishermanAvoidanceFactor;
                         aiAgent.debug = debug;
                     }
                     
@@ -401,8 +455,8 @@ public class GameManager : MonoBehaviour
                     {
                         fishingShip.AddComponent<Task_8.AI.Avoidance>();
                         Task_8.AI.Avoidance aiAgent = fishingShip.GetComponent<Task_8.AI.Avoidance>();
-                        aiAgent.avoidanceRadius = tradeShipAvoidanceRadius;
-                        aiAgent.avoidanceFactor = pirateShipAvoidanceFactor;
+                        aiAgent.avoidanceRadius = fishermanAvoidanceRadius;
+                        aiAgent.avoidanceFactor = fishermanAvoidanceFactor;
                         aiAgent.debug = debug;
                     }
                     
@@ -433,8 +487,8 @@ public class GameManager : MonoBehaviour
                     {
                         fishingShip.AddComponent<Task_9.AI.Avoidance>();
                         Task_9.AI.Avoidance aiAgent = fishingShip.GetComponent<Task_9.AI.Avoidance>();
-                        aiAgent.avoidanceRadius = tradeShipAvoidanceRadius;
-                        aiAgent.avoidanceFactor = pirateShipAvoidanceFactor;
+                        aiAgent.avoidanceRadius = fishermanAvoidanceRadius;
+                        aiAgent.avoidanceFactor = fishermanAvoidanceFactor;
                         aiAgent.debug = debug;
                     }
                     

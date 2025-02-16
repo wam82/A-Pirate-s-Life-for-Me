@@ -308,7 +308,7 @@ namespace Task_9.AI
                     _sneakTarget = GetSneakTarget();
                     if (_sneakTarget != null)
                     {
-                        if (trackedTarget.CompareTag("Port"))
+                        if (trackedTarget.CompareTag("Port") || trackedTarget.CompareTag("Player"))
                         {
                             Debug.Log("Somehow Entered");
                             _latestTarget = trackedTarget;

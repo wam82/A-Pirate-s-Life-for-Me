@@ -15,9 +15,7 @@ namespace Task_9.AI
 
         public override SteeringOutput GetKinematic(AIAgent agent)
         {
-            // DrawDebug(agent);
-
-            var output = base.GetKinematic(agent);
+            SteeringOutput output = base.GetKinematic(agent);
 
             Vector3 desiredVelocity = agent.TargetPosition - agent.transform.position;
             float distance = desiredVelocity.magnitude;
@@ -41,7 +39,7 @@ namespace Task_9.AI
 
         public override SteeringOutput GetSteering(AIAgent agent)
         {
-            DrawDebug(agent);
+            // DrawDebug(agent);
 
             var output = base.GetSteering(agent);
 

@@ -5,18 +5,11 @@ using UnityEngine;
 
 public class FishermanCollision : MonoBehaviour
 {
-    private bool _isDestroyed = false;
-
     private void OnCollisionEnter(Collision other)
     {
-        if (_isDestroyed)
-        {
-            return;
-        }
-        
         GameObject otherObject = other.gameObject;
 
-        if (otherObject.CompareTag("TradeShip") || otherObject.CompareTag("PirateShip"))
+        if (otherObject.CompareTag("TradeShip") || otherObject.CompareTag("PirateShip") || otherObject.CompareTag("Player"))
         {
             DestroyShip(otherObject);
             DestroyShip(gameObject);
@@ -32,7 +25,7 @@ public class FishermanCollision : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            if (ship.CompareTag("TradeShip"))
+            if (ship.CompareTag("TradeShip") || ship.CompareTag("Player"))
             {
                 GameManager.Instance.RemoveTradeShip(ship);
             }
@@ -41,8 +34,5 @@ public class FishermanCollision : MonoBehaviour
                 GameManager.Instance.RemovePirate(ship);
             }
         }
-        
-        ship.SetActive(false);
-        _isDestroyed = true;
     }
 }

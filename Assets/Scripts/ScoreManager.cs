@@ -52,7 +52,7 @@ public class ScoreManager : MonoBehaviour
         return new Dictionary<Team, int>(_teamScore);
     }
 
-    private Team FindTeam(GameObject obj)
+    public Team FindTeam(GameObject obj)
     {
         Team team = null;
         foreach (Team t in _teamScore.Keys)
