@@ -1339,9 +1339,10 @@ GameObject:
   - component: {fileID: 3805740072883271907}
   - component: {fileID: 3646026690635370696}
   - component: {fileID: 1812877517696334745}
+  - component: {fileID: 5605523271395855777}
   m_Layer: 0
   m_Name: Fishing Ship
-  m_TagString: TradeShip
+  m_TagString: FishingShip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1448,6 +1449,18 @@ CapsuleCollider:
   m_Height: 45
   m_Direction: 2
   m_Center: {x: 1, y: -4, z: 1}
+--- !u!114 &5605523271395855777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2937683672836335304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e11379df88d4449ea568f2086e19668, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3794633239331231933
 GameObject:
   m_ObjectHideFlags: 0

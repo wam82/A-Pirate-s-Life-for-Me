@@ -9,14 +9,16 @@ TagManager:
   - Island
   - Port
   - Barrel
+  - FishingShip
+  - FishingSpot
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
-  - Pirates
+  - 
   - 
   - 
   - 

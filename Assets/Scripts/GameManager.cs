@@ -1,7 +1,16 @@
 using System.Collections.Generic;
-using Task_4.AI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using AIAgent = Task_4.AI.AIAgent;
+using Arrive = Task_4.AI.Arrive;
+using Avoidance = Task_4.AI.Avoidance;
+using FaceDirection = Task_4.AI.FaceDirection;
+using Flee = Task_4.AI.Flee;
+using FOVTrigger = Task_4.AI.FOVTrigger;
+using MeshGenerator = Task_4.AI.MeshGenerator;
+using Pursue = Task_4.AI.Pursue;
+using Sneak = Task_4.AI.Sneak;
+using Wander = Task_4.AI.Wander;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,8 +38,11 @@ public class GameManager : MonoBehaviour
     
     [Header("Game Settings")]
     [SerializeField] private float totalTime;
+    [SerializeField] private float maxNumberOfFishingShips;
     [SerializeField] private List<Material> materials;
     [SerializeField] private GameObject tradeShipPrefab;
+    [SerializeField] private GameObject fishingShipPrefab;
+    [SerializeField] private Path pathTemplate;
     private int _totalNumberOfPirates;
     
     [Header("Trade Ship Settings")]
@@ -59,6 +71,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float orbitRadius; // 15
     [SerializeField] private float correctionFactor; // 0.5
     
+    [Header("Fishing Ship Settings")]
+    [SerializeField] private float fishingShipMaxSpeed;
+    [SerializeField] private float fishingRadius;
+    [SerializeField] private float fishingSpawnRadius;
+    
     [Header("Barrel Settings")]
     [SerializeField] private float barrelRadius;
     [SerializeField] private float barrelMaxSpeed;
@@ -71,6 +88,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> tradeShips = new List<GameObject>();
     [SerializeField] private List<GameObject> harbors = new List<GameObject>();
     [SerializeField] private List<GameObject> barrels = new List<GameObject>();
+    [SerializeField] private List<GameObject> fishingShips = new List<GameObject>();
     [SerializeField] private GameObject island;
     
     
@@ -124,6 +142,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public Path GetPath()
+    {
+        return pathTemplate;
+    }
+
     public List<GameObject> GetPirates()
     {
         return new List<GameObject>(pirateShips);
@@ -142,6 +165,14 @@ public class GameManager : MonoBehaviour
         if (pirate != null && pirateShips.Contains(pirate))
         {
             pirateShips.Remove(pirate);
+        }
+    }
+    
+    public void RemoveFishingShip(GameObject ship)
+    {
+        if (ship != null && fishingShips.Contains(ship))
+        {
+            fishingShips.Remove(ship);
         }
     }
         
@@ -170,6 +201,10 @@ public class GameManager : MonoBehaviour
         return new List<GameObject>(barrels);
     }
 
+    public List<GameObject> GetFishingShips()
+    {
+        return new List<GameObject>(fishingShips);
+    }
     public float GetTotalTime()
     {
         return totalTime;
@@ -214,7 +249,7 @@ public class GameManager : MonoBehaviour
         tradeShips.Clear();
         harbors.Clear();
         barrels.Clear();
-       
+        fishingShips.Clear();
         
         pirateShips.AddRange(GameObject.FindGameObjectsWithTag("PirateShip"));
         harbors.AddRange(GameObject.FindGameObjectsWithTag("Port"));
@@ -247,6 +282,12 @@ public class GameManager : MonoBehaviour
                 }
             }
             tradeShips.AddRange(GameObject.FindGameObjectsWithTag("TradeShip"));
+            
+            if (fishingShipPrefab != null)
+            {
+                SpawnFishingShips();
+            }
+            fishingShips.AddRange(GameObject.FindGameObjectsWithTag("FishingShip"));
         }
         island = GameObject.FindGameObjectWithTag("Island");
         
@@ -295,17 +336,85 @@ public class GameManager : MonoBehaviour
 
     private static Vector3 GetSpawnPoint(Vector3 harborPosition, float radius)
     {
+        // Generate a random spawn offset in the x-z plane
         float angle = Random.Range(0f, 360f);
         float radians = angle * Mathf.Deg2Rad;
-        
         float x = Mathf.Cos(radians) * radius;
         float z = Mathf.Sin(radians) * radius;
-        
-        return new Vector3(harborPosition.x + x, harborPosition.y, harborPosition.z + z);
+    
+        // Start the spawn point a bit above the expected ground level.
+        Vector3 spawnPoint = new Vector3(harborPosition.x + x, harborPosition.y + 10f, harborPosition.z + z);
+    
+        // Perform a downward raycast from the spawn point to find the ground.
+        RaycastHit hit;
+        // You can optionally add a LayerMask to limit which objects count as "ground".
+        if (Physics.Raycast(spawnPoint, Vector3.down, out hit, 50f, LayerMask.GetMask("Ground")))
+        {
+            // Set the spawn point's y-coordinate to the ground's height.
+            spawnPoint.y = hit.point.y+0.9f;
+        }
+        else
+        {
+            // If no ground is found, you could fall back to a default y value.
+            spawnPoint.y = harborPosition.y+0.15f;
+        }
+    
+        return spawnPoint;
+    }
+
+    private void SpawnFishingShips()
+    {
+        int index = 0;
+        for (int i = 0; i < maxNumberOfFishingShips; i++)
+        {
+            GameObject harbor = harbors[index % harbors.Count];
+            Vector3 spawnPosition = GetSpawnPoint(harbor.transform.position, fishingSpawnRadius);
+            Instantiate(fishingShipPrefab, spawnPosition, Quaternion.identity);
+            index++;
+        }
     }
 
     private void ApplyScripts(string sceneName)
     {
+        foreach (GameObject fishingShip in fishingShips)
+        {
+            switch (sceneName)
+            {
+                case "Task 7":
+                    if (!fishingShip.GetComponent<Task_7.AI.AIAgent>())
+                    {
+                        fishingShip.AddComponent<Task_7.AI.AIAgent>();
+                        Task_7.AI.AIAgent aiAgent = fishingShip.GetComponent<Task_7.AI.AIAgent>();
+                        aiAgent.maxSpeed = fishingShipMaxSpeed;
+                        aiAgent.island = island;
+                        aiAgent.ports = harbors;
+                    }
+
+                    if (!fishingShip.GetComponent<Task_7.AI.PathFind>())
+                    {
+                        fishingShip.AddComponent<Task_7.AI.PathFind>();
+                        Task_7.AI.PathFind aiAgent = fishingShip.GetComponent<Task_7.AI.PathFind>();
+                        aiAgent.fishingRadius = fishingRadius;
+                    }
+                    
+                    if (!fishingShip.GetComponent<Task_7.AI.FaceDirection>())
+                    {
+                        fishingShip.AddComponent<Task_7.AI.FaceDirection>();
+                    }
+                    
+                    if (!fishingShip.GetComponent<Task_7.AI.Avoidance>())
+                    {
+                        fishingShip.AddComponent<Task_7.AI.Avoidance>();
+                        Task_7.AI.Avoidance aiAgent = fishingShip.GetComponent<Task_7.AI.Avoidance>();
+                        aiAgent.avoidanceRadius = tradeShipAvoidanceRadius;
+                        aiAgent.avoidanceFactor = pirateShipAvoidanceFactor;
+                        aiAgent.debug = debug;
+                    }
+                    
+                    break;
+            }
+        }
+        
         foreach (GameObject barrel in barrels)
         {
             switch (sceneName)
@@ -323,6 +432,26 @@ public class GameManager : MonoBehaviour
                     {
                         barrel.AddComponent<Task_6.AI.Wander>();
                         Task_6.AI.Wander aiAgent = barrel.GetComponent<Task_6.AI.Wander>();
+                        aiAgent.wanderDegrees = barrelWanderDegree;
+                        aiAgent.wanderInterval = barrelWanderInterval;
+                        aiAgent.orbitRadius = barrelRadius;
+                        aiAgent.correctionFactor = barrelCorrectionFactor;
+                    }
+                    
+                    break;
+                case "Task 7":
+                    if (!barrel.GetComponent<Task_7.AI.AIAgent>())
+                    {
+                        barrel.AddComponent<Task_7.AI.AIAgent>();
+                        Task_7.AI.AIAgent aiAgent = barrel.GetComponent<Task_7.AI.AIAgent>();
+                        aiAgent.maxSpeed = barrelMaxSpeed;
+                        aiAgent.island = island;
+                    }
+
+                    if (!barrel.GetComponent<Task_7.AI.Wander>())
+                    {
+                        barrel.AddComponent<Task_7.AI.Wander>();
+                        Task_7.AI.Wander aiAgent = barrel.GetComponent<Task_7.AI.Wander>();
                         aiAgent.wanderDegrees = barrelWanderDegree;
                         aiAgent.wanderInterval = barrelWanderInterval;
                         aiAgent.orbitRadius = barrelRadius;
@@ -578,6 +707,86 @@ public class GameManager : MonoBehaviour
                         meshGenerator.agent = pirate.GetComponent<Task_6.AI.AIAgent>();
                     }
                     break;
+                case "Task 7":
+                    // Attach all behavioural scripts to each pirates
+                    if (!pirate.GetComponent<Task_7.AI.AIAgent>())
+                    {
+                        pirate.AddComponent<Task_7.AI.AIAgent>();
+                        Task_7.AI.AIAgent aiAgent = pirate.GetComponent<Task_7.AI.AIAgent>();
+                        aiAgent.ports = harbors;
+                        aiAgent.island = island;
+                        aiAgent.maxSpeed = pirateShipMaxSpeed;
+                        aiAgent.lockY = lockY;
+                        aiAgent.fovDistance = fovDistance;
+                        aiAgent.fovAngle = fovAngle;
+                        aiAgent.segments = segments;
+                    }
+                    
+                    if (!pirate.GetComponent<Task_7.AI.Avoidance>())
+                    {
+                        pirate.AddComponent<Task_7.AI.Avoidance>();
+                        Task_7.AI.Avoidance aiAgent = pirate.GetComponent<Task_7.AI.Avoidance>();
+                        aiAgent.avoidanceRadius = pirateShipAvoidanceRadius;
+                        aiAgent.avoidanceFactor = pirateShipAvoidanceFactor;
+                        aiAgent.debug = debug;
+                    }
+                    
+                    if (!pirate.GetComponent<Task_7.AI.FaceDirection>())
+                    {
+                        pirate.AddComponent<Task_7.AI.FaceDirection>();
+                    }
+                    
+                    if (!pirate.GetComponent<Task_7.AI.Pursue>())
+                    {
+                        pirate.AddComponent<Task_7.AI.Pursue>();
+                    }
+                    
+                    if (!pirate.GetComponent<Task_7.AI.Wander>())
+                    {
+                        pirate.AddComponent<Task_7.AI.Wander>();
+                        Task_7.AI.Wander aiAgent = pirate.GetComponent<Task_7.AI.Wander>();
+                        aiAgent.wanderDegrees = wanderDegrees;
+                        aiAgent.wanderInterval = wanderInterval;
+                        aiAgent.orbitRadius = orbitRadius;
+                        aiAgent.correctionFactor = correctionFactor;
+                    }
+                    
+                    // Attach all scripts related to the behaviour of the FOV field 
+                    fovTransform = pirate.transform.Find("FOV");
+                    if (fovTransform == null)
+                    {
+                        Debug.LogError("No FOV transform found.");
+                        continue;
+                    }
+                    
+                    fovObject = fovTransform.gameObject;
+                    if (!fovObject.GetComponent<Task_7.AI.FOVTrigger>())
+                    {
+                        fovObject.AddComponent<Task_7.AI.FOVTrigger>();
+                        if (!pirate.GetComponent<Task_7.AI.AIAgent>())
+                        {
+                            Debug.LogError("No AIAgent component found for FOVTrigger.");
+                            continue;
+                        }
+                        Task_7.AI.FOVTrigger fovTrigger = fovObject.GetComponent<Task_7.AI.FOVTrigger>();
+                        fovTrigger.agent = pirate.GetComponent<Task_7.AI.AIAgent>();
+                        // fovTrigger.agent = pirate.GetComponent<Task_7.AI.AIAgent>();
+                        Task_7.AI.AIAgent pirateAI = pirate.GetComponent<Task_7.AI.AIAgent>();
+                        pirateAI.fovTrigger = fovObject.GetComponent<Task_7.AI.FOVTrigger>();
+                    }
+                    
+                    if (!fovObject.GetComponent<Task_7.AI.MeshGenerator>())
+                    {
+                        fovObject.AddComponent<Task_7.AI.MeshGenerator>();
+                        if (!pirate.GetComponent<Task_7.AI.AIAgent>())
+                        {
+                            Debug.LogError("No AIAgent component found for MeshGenerator.");
+                            continue;
+                        }
+                        Task_7.AI.MeshGenerator meshGenerator = fovObject.GetComponent<Task_7.AI.MeshGenerator>();
+                        meshGenerator.agent = pirate.GetComponent<Task_7.AI.AIAgent>();
+                    }
+                    break;
             }
         }
 
@@ -744,6 +953,62 @@ public class GameManager : MonoBehaviour
                     if (!tradeShip.GetComponent<Task_6.AI.Seek>())
                     {
                         tradeShip.AddComponent<Task_6.AI.Seek>();
+                    }
+                    break;
+                case "Task 7":
+                    if (!tradeShip.GetComponent<Task_7.AI.AIAgent>())
+                    {
+                        tradeShip.AddComponent<Task_7.AI.AIAgent>();
+                        Task_7.AI.AIAgent aiAgent = tradeShip.GetComponent<Task_7.AI.AIAgent>();
+                        aiAgent.ports = harbors;
+                        aiAgent.island = island;
+                        aiAgent.maxSpeed = tradeShipMaxSpeed;
+                        aiAgent.lockY = lockY;
+                        aiAgent.viewDistance = viewDistance;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_7.AI.Arrive>())
+                    {
+                        tradeShip.AddComponent<Task_7.AI.Arrive>();
+                        Task_7.AI.Arrive aiAgent = tradeShip.GetComponent<Task_7.AI.Arrive>();
+                        aiAgent.slowRadius = arriveSlowRadius;
+                        aiAgent.stopRadius = arriveStopRadius;
+                    }
+                    
+                    if (!tradeShip.GetComponent<Task_7.AI.Avoidance>())
+                    {
+                        tradeShip.AddComponent<Task_7.AI.Avoidance>();
+                        Task_7.AI.Avoidance aiAgent = tradeShip.GetComponent<Task_7.AI.Avoidance>();
+                        aiAgent.avoidanceRadius = tradeShipAvoidanceRadius;
+                        aiAgent.avoidanceFactor = tradeShipAvoidanceFactor;
+                        aiAgent.debug = debug;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_7.AI.FaceDirection>())
+                    {
+                        tradeShip.AddComponent<Task_7.AI.FaceDirection>();
+                    }
+
+                    if (!tradeShip.GetComponent<Task_7.AI.Flee>())
+                    {
+                        tradeShip.AddComponent<Task_7.AI.Flee>();
+                        Task_7.AI.Flee aiAgent = tradeShip.GetComponent<Task_7.AI.Flee>();
+                        aiAgent.seekWeight = seekWeight;
+                        aiAgent.velocityMatchWeight = velocityMatchWeight;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_7.AI.Sneak>())
+                    {
+                        tradeShip.AddComponent<Task_7.AI.Sneak>();
+                        Task_7.AI.Sneak aiAgent = tradeShip.GetComponent<Task_7.AI.Sneak>();
+                        aiAgent.bufferDistance = sneakBufferDistance;
+                        aiAgent.slowRadius = sneakSlowRadius;
+                        aiAgent.crowdingSeparation = sneakCrowdingSeparation;
+                    }
+
+                    if (!tradeShip.GetComponent<Task_7.AI.Seek>())
+                    {
+                        tradeShip.AddComponent<Task_7.AI.Seek>();
                     }
                     break;
             }
