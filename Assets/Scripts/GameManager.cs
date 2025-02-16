@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> harbors = new List<GameObject>();
     [SerializeField] private List<GameObject> barrels = new List<GameObject>();
     [SerializeField] private List<GameObject> fishingShips = new List<GameObject>();
+    [SerializeField] private List<GameObject> environment = new List<GameObject>();
     [SerializeField] private GameObject island;
     
     
