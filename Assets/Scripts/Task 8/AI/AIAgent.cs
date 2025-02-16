@@ -30,7 +30,7 @@ namespace Task_8.AI
         
         [Header("Other Objects")]
         public List<GameObject> ports;
-        public GameObject island;
+        public List<GameObject> islands;
         public FOVTrigger fovTrigger;
         public Queue<GameObject> Obstacles = new Queue<GameObject>();
         private Transform _latestTarget;
@@ -146,7 +146,10 @@ namespace Task_8.AI
                 
                 if (CurrentState == ShipState.Pathing)
                 {
-                    Obstacles.Enqueue(island);
+                    foreach (GameObject island in islands)
+                    {
+                        Obstacles.Enqueue(island);
+                    }
                     
                     Move();
                     
@@ -196,7 +199,11 @@ namespace Task_8.AI
                         CurrentState = ShipState.Sneaking;
                     }
                     
-                    Obstacles.Enqueue(island);
+                    foreach (GameObject island in islands)
+                    {
+                        Obstacles.Enqueue(island);
+                    }
+                    
                     foreach (GameObject ship in GameManager.Instance.GetTradeShips())
                     {
                         if (ship.transform.Equals(transform))
@@ -244,7 +251,11 @@ namespace Task_8.AI
 
                 if (CurrentState == ShipState.Fleeing)
                 {
-                    Obstacles.Enqueue(island);
+                    foreach (GameObject island in islands)
+                    {
+                        Obstacles.Enqueue(island);
+                    }
+                    
                     foreach (GameObject ship in GameManager.Instance.GetTradeShips())
                     {
                         if (ship.transform.Equals(transform))
@@ -297,7 +308,10 @@ namespace Task_8.AI
                             Debug.Log(_latestTarget);
                         }
                         trackedTarget = _sneakTarget;
-                        Obstacles.Enqueue(island);
+                        foreach (GameObject island in islands)
+                        {
+                            Obstacles.Enqueue(island);
+                        }
                         foreach (GameObject barrel in GameManager.Instance.GetBarrels())
                         {
                             Obstacles.Enqueue(barrel);
@@ -333,7 +347,10 @@ namespace Task_8.AI
                 if (CurrentState == ShipState.Seeking)
                 {
                     // Debug.Log("Seeking");
-                    Obstacles.Enqueue(island);
+                    foreach (GameObject island in islands)
+                    {
+                        Obstacles.Enqueue(island);
+                    }
                     foreach (GameObject barrel in GameManager.Instance.GetBarrels())
                     {
                         Obstacles.Enqueue(barrel);
@@ -395,7 +412,11 @@ namespace Task_8.AI
                 
                 if (CurrentState == ShipState.Wandering)
                 {
-                    Obstacles.Enqueue(island);
+                    foreach (GameObject island in islands)
+                    {
+                        Obstacles.Enqueue(island);
+                    }
+                    
                     foreach (GameObject port in ports)
                     {
                         Obstacles.Enqueue(port);
@@ -416,8 +437,10 @@ namespace Task_8.AI
 
                 if (CurrentState == ShipState.Pursuing)
                 {
-                    Obstacles.Enqueue(island);
-                
+                    foreach (GameObject island in islands)
+                    {
+                        Obstacles.Enqueue(island);
+                    }
                     
                     Transform pursuedShip = fovTrigger.GetClosestTradeShip(transform);
                     
@@ -439,7 +462,11 @@ namespace Task_8.AI
 
                 if (CurrentState == ShipState.Avoiding)
                 {
-                    Obstacles.Enqueue(island);
+                    foreach (GameObject island in islands)
+                    {
+                        Obstacles.Enqueue(island);
+                    }
+                    
                     foreach (GameObject port in ports)
                     {
                         Obstacles.Enqueue(port);

@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour
     private bool ShouldPersistAcrossScenes(string sceneName)
     {
         // Define scenes where GameManager should persist
-        return sceneName == "MainMenu" || sceneName == "Task 4" || sceneName == "Task 5" || sceneName == "Task 6" || sceneName == "Task 7";
+        return sceneName == "MainMenu" || sceneName == "Task 4" || sceneName == "Task 5" || sceneName == "Task 6" || sceneName == "Task 7" || sceneName == "Task 8" || sceneName == "Task 9" || sceneName == "Task 10";
     }
 
     private void Update()
@@ -176,11 +176,6 @@ public class GameManager : MonoBehaviour
             fishingShips.Remove(ship);
         }
     }
-        
-    public void ClearPirates()
-    {
-        pirateShips.Clear();
-    }
 
     public int GetAlivePirates()
     {
@@ -221,7 +216,6 @@ public class GameManager : MonoBehaviour
         if (tradeShip != null && tradeShips.Contains(tradeShip))
         {
             tradeShips.Remove(tradeShip);
-            // Debug.LogError(tradeShip.name);
         }
     }
     private void CheckGameOver()
@@ -251,10 +245,12 @@ public class GameManager : MonoBehaviour
         harbors.Clear();
         barrels.Clear();
         fishingShips.Clear();
+        environment.Clear();
         
         pirateShips.AddRange(GameObject.FindGameObjectsWithTag("PirateShip"));
         harbors.AddRange(GameObject.FindGameObjectsWithTag("Port"));
         barrels.AddRange(GameObject.FindGameObjectsWithTag("Barrel"));
+        environment.AddRange(GameObject.FindGameObjectsWithTag("Island"));
         if (materials.Count <= 0)
         {
             tradeShips.AddRange(GameObject.FindGameObjectsWithTag("TradeShip"));
@@ -419,7 +415,7 @@ public class GameManager : MonoBehaviour
                         fishingShip.AddComponent<Task_8.AI.AIAgent>();
                         Task_8.AI.AIAgent aiAgent = fishingShip.GetComponent<Task_8.AI.AIAgent>();
                         aiAgent.maxSpeed = fishingShipMaxSpeed;
-                        aiAgent.island = island;
+                        aiAgent.islands = environment;
                         aiAgent.ports = harbors;
                     }
 
@@ -498,7 +494,7 @@ public class GameManager : MonoBehaviour
                         barrel.AddComponent<Task_8.AI.AIAgent>();
                         Task_8.AI.AIAgent aiAgent = barrel.GetComponent<Task_8.AI.AIAgent>();
                         aiAgent.maxSpeed = barrelMaxSpeed;
-                        aiAgent.island = island;
+                        aiAgent.islands = environment;
                     }
 
                     if (!barrel.GetComponent<Task_8.AI.Wander>())
@@ -847,7 +843,7 @@ public class GameManager : MonoBehaviour
                         pirate.AddComponent<Task_8.AI.AIAgent>();
                         Task_8.AI.AIAgent aiAgent = pirate.GetComponent<Task_8.AI.AIAgent>();
                         aiAgent.ports = harbors;
-                        aiAgent.island = island;
+                        aiAgent.islands = environment;
                         aiAgent.maxSpeed = pirateShipMaxSpeed;
                         aiAgent.lockY = lockY;
                         aiAgent.fovDistance = fovDistance;
@@ -1150,7 +1146,7 @@ public class GameManager : MonoBehaviour
                         tradeShip.AddComponent<Task_8.AI.AIAgent>();
                         Task_8.AI.AIAgent aiAgent = tradeShip.GetComponent<Task_8.AI.AIAgent>();
                         aiAgent.ports = harbors;
-                        aiAgent.island = island;
+                        aiAgent.islands = environment;
                         aiAgent.maxSpeed = tradeShipMaxSpeed;
                         aiAgent.lockY = lockY;
                         aiAgent.viewDistance = viewDistance;

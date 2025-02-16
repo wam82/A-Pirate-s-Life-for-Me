@@ -76,12 +76,17 @@ namespace Task_8.AI
 
         public override SteeringOutput GetSteering(AIAgent agent)
         {
-            _island = agent.island.transform;
+            FindIsland();
             SteeringOutput output = base.GetSteering(agent);
 
             output.Linear = GetKinematic(agent).Linear - agent.Velocity;
             
             return output;
+        }
+
+        private void FindIsland()
+        {
+            _island = GameObject.Find("Island").transform;
         }
     }
 }
