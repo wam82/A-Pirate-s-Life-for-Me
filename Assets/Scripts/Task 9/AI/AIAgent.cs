@@ -101,6 +101,7 @@ namespace Task_9.AI
                     _portQueue.Enqueue(port.GetComponent<Transform>());
                 }
                 _startHarbor = GetClosestHarbor(transform, _portQueue).gameObject;
+                _portQueue.Clear();
                 ShufflePorts();
                 foreach (GameObject port in ports)
                 {
@@ -689,7 +690,7 @@ namespace Task_9.AI
 
         IEnumerator DockingSquence()
         {
-            ScoreManager.Instance.AddPoints(gameObject, CalculateTradePrice(_startHarbor.transform.position, _endHarbor.transform.position));
+            GameManager.Instance.scoreManager.AddPoints(gameObject, CalculateTradePrice(_startHarbor.transform.position, _endHarbor.transform.position));
             _startHarbor = _endHarbor;
             CurrentState = ShipState.Waiting;
             yield return new WaitForSeconds(2f);

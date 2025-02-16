@@ -2,16 +2,22 @@ using UnityEngine;
 
 public class Path : MonoBehaviour
 {
-    private void Start()
+    private Node[] _nodes;
+
+    public Node[] Nodes
     {
-        Nodes = GetComponentsInChildren<Node>();
+        get
+        {
+            if (_nodes == null || _nodes.Length == 0)
+            {
+                _nodes = GetComponentsInChildren<Node>();
+            }
+            return _nodes;
+        }
+        private set => _nodes = value;
     }
-    
-    public Node[] Nodes { get; private set; }
 
     public int NodeIndex { get; set; }
-
     public Node CurrentNode { get; set; }
-
     public Node LastNode { get; set; }
 }

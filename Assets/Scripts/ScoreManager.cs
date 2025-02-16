@@ -5,22 +5,7 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    public static ScoreManager Instance { get; private set; }
     private Dictionary<Team, int> _teamScore = new Dictionary<Team, int>();
-    
-    
-    private void Awake()
-    {
-        // Singleton setup
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        // Optionally, persist across scenes:
-        // DontDestroyOnLoad(gameObject);
-    }
     
     public Team GetTopScoringTeam()
     {

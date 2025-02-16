@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -42,7 +43,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<Material> materials;
     [SerializeField] private GameObject tradeShipPrefab;
     [SerializeField] private GameObject fishingShipPrefab;
-    [SerializeField] private Path pathTemplate;
+    [SerializeField] private GameObject scoreManagerPrefab;
+    [SerializeField] private GameObject pathPrefab;
+    [NonSerialized] private Path pathTemplate;
+    [NonSerialized] public ScoreManager scoreManager;
     private int _totalNumberOfPirates;
     
     [Header("Trade Ship Settings")]
@@ -108,6 +112,8 @@ public class GameManager : MonoBehaviour
         if (_instance == null)
         {
             _instance = this;
+            scoreManager = scoreManagerPrefab.GetComponent<ScoreManager>();
+            pathTemplate = pathPrefab.GetComponent<Path>();
             FetchShips();
         }
         else if (_instance != this)
@@ -234,7 +240,7 @@ public class GameManager : MonoBehaviour
         {
             GameOver("Time's up! Game over.");
             Time.timeScale = 0;
-            Debug.Log(ScoreManager.Instance.GetTopScoringTeam());
+            Debug.Log(scoreManager.GetTopScoringTeam());
         }
     }
         
@@ -302,7 +308,7 @@ public class GameManager : MonoBehaviour
         Team team = ScriptableObject.CreateInstance<Team>();
         team.Harbor = harbor;
         team.TradeShip = tradeShip;
-        ScoreManager.Instance.AddTeam(team);
+        scoreManager.AddTeam(team);
     }
 
     public GameObject Spawn(GameObject harbor, Material material)
