@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
@@ -20,6 +21,18 @@ public class ScoreManager : MonoBehaviour
         // Optionally, persist across scenes:
         // DontDestroyOnLoad(gameObject);
     }
+    
+    public Team GetTopScoringTeam()
+    {
+        if (_teamScore == null || _teamScore.Count == 0)
+        {
+            Debug.LogWarning("No teams in the score dictionary.");
+            return null;
+        }
+
+        return _teamScore.Aggregate((highest, next) => next.Value > highest.Value ? next : highest).Key;
+    }
+
 
     public void AddTeam(Team team)
     {
