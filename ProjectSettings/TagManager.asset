@@ -8,6 +8,7 @@ TagManager:
   - PirateShip
   - Island
   - Port
+  - Barrel
   layers:
   - Default
   - TransparentFX

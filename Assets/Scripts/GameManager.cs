@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float totalTime;
     [SerializeField] private List<Material> materials;
     [SerializeField] private GameObject tradeShipPrefab;
-    [SerializeField] private float spawnRadius;
     private int _totalNumberOfPirates;
     
     [Header("Trade Ship Settings")]
@@ -46,6 +45,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float sneakBufferDistance; // 10
     [SerializeField] private float sneakSlowRadius; // 12 
     [SerializeField] private float sneakCrowdingSeparation; // 1
+    [SerializeField] private float spawnRadius;
     
     [Header("Pirate Ship Settings")]
     [SerializeField] private float pirateShipMaxSpeed; // 1.5
@@ -59,10 +59,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float orbitRadius; // 15
     [SerializeField] private float correctionFactor; // 0.5
     
+    [Header("Barrel Settings")]
+    [SerializeField] private float barrelRadius;
+    [SerializeField] private float barrelMaxSpeed;
+    [SerializeField] private float barrelWanderInterval;
+    [SerializeField] private float barrelWanderDegree;
+    [SerializeField] private float barrelCorrectionFactor;
+    
     [Header("Objects in Scene")]
     [SerializeField] private List<GameObject> pirateShips = new List<GameObject>();
     [SerializeField] private List<GameObject> tradeShips = new List<GameObject>();
     [SerializeField] private List<GameObject> harbors = new List<GameObject>();
+    [SerializeField] private List<GameObject> barrels = new List<GameObject>();
     [SerializeField] private GameObject island;
     
     
@@ -92,7 +100,7 @@ public class GameManager : MonoBehaviour
                 return;
             }
         }
-
+        
         // Only persist if we want this GameManager to be the same across scenes
         // if (ShouldPersistAcrossScenes(SceneManager.GetActiveScene().name))
         // {
@@ -103,11 +111,12 @@ public class GameManager : MonoBehaviour
     private bool ShouldPersistAcrossScenes(string sceneName)
     {
         // Define scenes where GameManager should persist
-        return sceneName == "MainMenu" || sceneName == "Task 4" || sceneName == "Task 5";
+        return sceneName == "MainMenu" || sceneName == "Task 4" || sceneName == "Task 5" || sceneName == "Task 6" || sceneName == "Task 7";
     }
 
     private void Update()
     {
+        DebugUtils.DrawCircle(island.transform.position, Vector3.up, Color.blue, barrelRadius);
         if (!_gameOver)
         {
             _gameTimer += Time.deltaTime;
@@ -156,6 +165,11 @@ public class GameManager : MonoBehaviour
         return new List<GameObject>(tradeShips);
     }
 
+    public List<GameObject> GetBarrels()
+    {
+        return new List<GameObject>(barrels);
+    }
+
     public float GetTotalTime()
     {
         return totalTime;
@@ -199,11 +213,12 @@ public class GameManager : MonoBehaviour
         pirateShips.Clear();
         tradeShips.Clear();
         harbors.Clear();
-
+        barrels.Clear();
        
         
         pirateShips.AddRange(GameObject.FindGameObjectsWithTag("PirateShip"));
         harbors.AddRange(GameObject.FindGameObjectsWithTag("Port"));
+        barrels.AddRange(GameObject.FindGameObjectsWithTag("Barrel"));
         if (materials.Count <= 0)
         {
             tradeShips.AddRange(GameObject.FindGameObjectsWithTag("TradeShip"));
@@ -291,12 +306,37 @@ public class GameManager : MonoBehaviour
 
     private void ApplyScripts(string sceneName)
     {
+        foreach (GameObject barrel in barrels)
+        {
+            switch (sceneName)
+            {
+                case "Task 6":
+                    if (!barrel.GetComponent<Task_6.AI.AIAgent>())
+                    {
+                        barrel.AddComponent<Task_6.AI.AIAgent>();
+                        Task_6.AI.AIAgent aiAgent = barrel.GetComponent<Task_6.AI.AIAgent>();
+                        aiAgent.maxSpeed = barrelMaxSpeed;
+                        aiAgent.island = island;
+                    }
+
+                    if (!barrel.GetComponent<Task_6.AI.Wander>())
+                    {
+                        barrel.AddComponent<Task_6.AI.Wander>();
+                        Task_6.AI.Wander aiAgent = barrel.GetComponent<Task_6.AI.Wander>();
+                        aiAgent.wanderDegrees = barrelWanderDegree;
+                        aiAgent.wanderInterval = barrelWanderInterval;
+                        aiAgent.orbitRadius = barrelRadius;
+                        aiAgent.correctionFactor = barrelCorrectionFactor;
+                    }
+                    
+                    break;
+            }
+        }
+        
         foreach (GameObject pirate in pirateShips)
         {
             Transform fovTransform;
             GameObject fovObject;
-            // Transform captureTransform;
-            // GameObject captureObject;
             switch (sceneName)
             {
                 case "Task 4":
@@ -377,19 +417,6 @@ public class GameManager : MonoBehaviour
                         MeshGenerator meshGenerator = fovObject.GetComponent<MeshGenerator>();
                         meshGenerator.agent = pirate.GetComponent<AIAgent>();
                     }
-                    
-                    // captureTransform = pirate.transform.Find("CaptureZone");
-                    // if (captureTransform == null)
-                    // {
-                    //     Debug.LogError("No CaptureZone transform found.");
-                    //     continue;
-                    // }
-                    // captureObject = captureTransform.gameObject;
-                    // if (!captureObject.GetComponent<CaptureZone>())
-                    // {
-                    //     captureObject.AddComponent<CaptureZone>();
-                    // }
-                    
                     break;
                 case "Task 5":
                     // Attach all behavioural scripts to each pirates

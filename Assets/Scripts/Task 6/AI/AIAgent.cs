@@ -70,7 +70,11 @@ namespace Task_6.AI
 
         private void Start()
         {
-            if (ports.Count > 0 && transform.CompareTag("TradeShip"))
+            if (transform.CompareTag("Barrel"))
+            {
+                
+            }
+            else if (ports.Count > 0 && transform.CompareTag("TradeShip"))
             {
                 foreach (GameObject port in ports)
                 {
@@ -80,7 +84,7 @@ namespace Task_6.AI
                 SetNewTarget();
                 CurrentState = ShipState.Navigating;
             }
-            else
+            else if (transform.CompareTag("PirateShip"))
             {
                 CurrentState = ShipState.Wandering;
             }
@@ -93,16 +97,26 @@ namespace Task_6.AI
                 Debug.DrawRay(transform.position, Velocity, Color.green);
             }
 
+            if (transform.CompareTag("Barrel"))
+            {
+                Move();
+            }
+
             // Trade ship behaviour
             if (transform.CompareTag("TradeShip"))
             {
                 UpdateGoals();
+                foreach (GameObject barrel in GameManager.Instance.GetBarrels())
+                {
+                    Obstacles.Enqueue(barrel);
+                }
                 
                 if (debug)
                 {
                     // Debug.Log(CurrentState);
                     DebugUtils.DrawCircle(transform.position, transform.up, Color.black, viewDistance);
                 }
+                
                 if (PursuitRegistry.Instance.IsPursued(transform) && CurrentState != ShipState.Fleeing)
                 {
                     trackedTarget = GetClosestHarbor(transform, _portQueue);
@@ -228,12 +242,17 @@ namespace Task_6.AI
             // Pirate ship behaviour
             if (transform.CompareTag("PirateShip"))
             {
+                foreach (GameObject barrel in GameManager.Instance.GetBarrels())
+                {
+                    Obstacles.Enqueue(barrel);
+                }
+                
                 if (fovTrigger.GetClosestTradeShip(transform) != null)
                 {
                     if (GameManager.Instance.GetTradeShips().Contains(fovTrigger.GetClosestTradeShip(transform).gameObject))
                     {
                         CurrentState = ShipState.Pursuing;
-                        Debug.Log(fovTrigger.GetClosestTradeShip(transform).gameObject.name);
+                        // Debug.Log(fovTrigger.GetClosestTradeShip(transform).gameObject.name);
                         // Debug.Log(GameManager.Instance.GetTradeShips().Count);
                     }
                     else
