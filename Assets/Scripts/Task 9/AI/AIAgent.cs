@@ -46,6 +46,8 @@ namespace Task_9.AI
         public float fovDistance;
         public float fovAngle;
         public int segments;
+        private GameObject _startHarbor;
+        private GameObject _endHarbor;
         public Vector3 Velocity { get; set; }
         
         [Header("Target Information")]
@@ -98,8 +100,14 @@ namespace Task_9.AI
                 {
                     _portQueue.Enqueue(port.GetComponent<Transform>());
                 }
-
+                _startHarbor = GetClosestHarbor(transform, _portQueue).gameObject;
+                ShufflePorts();
+                foreach (GameObject port in ports)
+                {
+                    _portQueue.Enqueue(port.GetComponent<Transform>());
+                }
                 SetNewTarget();
+                _endHarbor = trackedTarget.gameObject;
                 CurrentState = ShipState.Navigating;
             }
             else if (transform.CompareTag("PirateShip"))
@@ -122,37 +130,35 @@ namespace Task_9.AI
 
             if (transform.CompareTag("FishingShip"))
             {
-                foreach (GameObject ship in GameManager.Instance.GetFishingShips())
-                {
-                    if (ship.transform.Equals(transform))
-                    {
-                        continue;
-                    }
-                    Obstacles.Enqueue(ship);
-                }
-                foreach (GameObject barrel in GameManager.Instance.GetBarrels())
-                {
-                    Obstacles.Enqueue(barrel);
-                }
-                foreach (GameObject port in ports)
-                {
-                    if (port.transform.Equals(trackedTarget))
-                    {
-                        continue;
-                    }
-
-                    Obstacles.Enqueue(port);
-                }
-                
                 if (CurrentState == ShipState.Pathing)
                 {
-                    foreach (GameObject island in islands)
+                    foreach (GameObject ship in GameManager.Instance.GetFishingShips())
+                    {
+                        if (ship.transform.Equals(transform))
+                        {
+                            continue;
+                        }
+                        Obstacles.Enqueue(ship);
+                    }
+                    foreach (GameObject island in GameManager.Instance.GetEnvironment())
                     {
                         Obstacles.Enqueue(island);
                     }
-                    
+                    foreach (GameObject barrel in GameManager.Instance.GetBarrels())
+                    {
+                        Obstacles.Enqueue(barrel);
+                    }
+                    foreach (GameObject port in ports)
+                    {
+                        if (port.transform.Equals(trackedTarget))
+                        {
+                            continue;
+                        }
+
+                        Obstacles.Enqueue(port);
+                    }
                     Move();
-                    
+                    Obstacles.Clear();
                 }
 
                 if (CurrentState == ShipState.Fishing)
@@ -176,10 +182,13 @@ namespace Task_9.AI
                 {
                     Obstacles.Enqueue(barrel);
                 }
+                foreach (GameObject island in GameManager.Instance.GetEnvironment())
+                {
+                    Obstacles.Enqueue(island);
+                }
                 
                 if (debug)
                 {
-                    // Debug.Log(CurrentState);
                     DebugUtils.DrawCircle(transform.position, transform.up, Color.black, viewDistance);
                 }
                 
@@ -213,10 +222,6 @@ namespace Task_9.AI
 
                         Obstacles.Enqueue(ship);
                     }
-                    foreach (GameObject barrel in GameManager.Instance.GetBarrels())
-                    {
-                        Obstacles.Enqueue(barrel);
-                    }
                     foreach (GameObject ship in GameManager.Instance.GetFishingShips())
                     {
                         Obstacles.Enqueue(ship);
@@ -246,12 +251,13 @@ namespace Task_9.AI
                 if (CurrentState == ShipState.Undocking)
                 {
                     SetNewTarget();
+                    _endHarbor = trackedTarget.gameObject;
                     CurrentState = ShipState.Navigating;
                 }
 
                 if (CurrentState == ShipState.Fleeing)
                 {
-                    foreach (GameObject island in islands)
+                    foreach (GameObject island in GameManager.Instance.GetEnvironment())
                     {
                         Obstacles.Enqueue(island);
                     }
@@ -396,6 +402,11 @@ namespace Task_9.AI
                     Obstacles.Enqueue(ship);
                 }
                 
+                foreach (GameObject island in GameManager.Instance.GetEnvironment())
+                {
+                    Obstacles.Enqueue(island);
+                }
+                
                 if (fovTrigger.GetClosestTradeShip(transform) != null)
                 {
                     if (GameManager.Instance.GetTradeShips().Contains(fovTrigger.GetClosestTradeShip(transform).gameObject))
@@ -485,6 +496,41 @@ namespace Task_9.AI
                 }
             }            
         }
+        
+        public int CalculateTradePrice(Vector3 startHarbor, Vector3 endHarbor, float baseRate = 10f, float multiplier = 1.5f)
+        {
+            // Calculate the Euclidean distance between the two harbors
+            float distance = Vector3.Distance(startHarbor, endHarbor);
+
+            // Scale the price based on the distance
+            int price = Mathf.RoundToInt(baseRate + (distance * multiplier));
+
+            return price;
+        }
+
+
+        private void ShufflePorts()
+        {
+            if (ports.Count <= 1) return; // No need to shuffle if only one or no ports exist
+
+            System.Random rng = new System.Random();
+            int count = ports.Count;
+
+            // Perform Fisher-Yates shuffle
+            for (int i = count - 1; i > 0; i--)
+            {
+                int randomIndex = rng.Next(i + 1);
+                (ports[i], ports[randomIndex]) = (ports[randomIndex], ports[i]);
+            }
+
+            // Ensure currentHarbor is NOT the first element
+            if (ports[0] == _startHarbor && count > 1)
+            {
+                int swapIndex = rng.Next(1, count); // Pick any index except 0
+                (ports[0], ports[swapIndex]) = (ports[swapIndex], ports[0]);
+            }
+        }
+
 
         IEnumerator FishingSequence()
         {
@@ -643,6 +689,8 @@ namespace Task_9.AI
 
         IEnumerator DockingSquence()
         {
+            ScoreManager.Instance.AddPoints(gameObject, CalculateTradePrice(_startHarbor.transform.position, _endHarbor.transform.position));
+            _startHarbor = _endHarbor;
             CurrentState = ShipState.Waiting;
             yield return new WaitForSeconds(2f);
             CurrentState = ShipState.Undocking;

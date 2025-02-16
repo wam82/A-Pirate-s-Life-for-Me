@@ -9,11 +9,8 @@ namespace Task_9.AI
 
         private void DrawDebug(AIAgent agent)
         {
-            if (debug)
-            {
-                DebugUtils.DrawCircle(agent.TargetPosition, transform.up, Color.red, stopRadius);
-                DebugUtils.DrawCircle(agent.TargetPosition, transform.up, Color.yellow, slowRadius);
-            }
+            DebugUtils.DrawCircle(agent.TargetPosition, transform.up, Color.red, stopRadius);
+            DebugUtils.DrawCircle(agent.TargetPosition, transform.up, Color.yellow, slowRadius);
         }
 
         public override SteeringOutput GetKinematic(AIAgent agent)

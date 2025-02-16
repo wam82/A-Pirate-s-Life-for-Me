@@ -201,6 +201,11 @@ public class GameManager : MonoBehaviour
     {
         return new List<GameObject>(fishingShips);
     }
+
+    public List<GameObject> GetEnvironment()
+    {
+        return new List<GameObject>(environment);
+    }
     public float GetTotalTime()
     {
         return totalTime;
@@ -229,6 +234,7 @@ public class GameManager : MonoBehaviour
         {
             GameOver("Time's up! Game over.");
             Time.timeScale = 0;
+            Debug.Log(ScoreManager.Instance.GetTopScoringTeam());
         }
     }
         
@@ -301,7 +307,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject Spawn(GameObject harbor, Material material)
     {
-        Vector3 spawnPosition = GetSpawnPoint(harbor.transform.position, spawnRadius);
+        Vector3 spawnPosition = harbor.transform.Find("SpawnPoint").position;
         GameObject tradeShip = Instantiate(tradeShipPrefab, spawnPosition, Quaternion.identity);
         Transform sails = tradeShip.transform.Find("Sails");
         if (sails != null)
@@ -322,53 +328,7 @@ public class GameManager : MonoBehaviour
             child.GetComponent<Renderer>().material = material;
         }
     }
-    public void Respawn(Team team)
-    {
-        Vector3 spawnPosition = GetSpawnPoint(team.Harbor.transform.position, spawnRadius);
-        Instantiate(team.TradeShip, spawnPosition, Quaternion.identity);
-    }
-
-    private static Vector3 GetSpawnPoint(Vector3 harborPosition, float radius)
-    {
-        Vector3 spawnPoint;
-        RaycastHit hit;
-        LayerMask groundMask = LayerMask.GetMask("Ground");
-        LayerMask waterMask = LayerMask.GetMask("Water");
-
-        int maxAttempts = 10; // Prevent infinite loops
-        int attempt = 0;
-
-        do
-        {
-            // Generate a random spawn offset in the x-z plane
-            float angle = Random.Range(0f, 360f);
-            float radians = angle * Mathf.Deg2Rad;
-            float x = Mathf.Cos(radians) * radius;
-            float z = Mathf.Sin(radians) * radius;
-
-            // Start the spawn point a bit above the expected ground level
-            spawnPoint = new Vector3(harborPosition.x + x, harborPosition.y + 10f, harborPosition.z + z);
-
-            // Perform a downward raycast to check the terrain
-            if (Physics.Raycast(spawnPoint, Vector3.down, out hit, 50f))
-            {
-                spawnPoint.y = hit.point.y + 0.9f;
-
-                // Check if the hit surface is water
-                if (((1 << hit.collider.gameObject.layer) & waterMask) != 0)
-                {
-                    return spawnPoint; // Valid water spawn found
-                }
-            }
-
-            attempt++;
-        } while (attempt < maxAttempts);
-
-        // If no valid water spawn is found, return harbor position slightly above water as fallback
-        return new Vector3(harborPosition.x, harborPosition.y + 0.15f, harborPosition.z);
-    }
-
-
+    
     private void ApplyScripts(string sceneName)
     {
         foreach (GameObject fishingShip in fishingShips)
@@ -402,7 +362,7 @@ public class GameManager : MonoBehaviour
                         fishingShip.AddComponent<Task_7.AI.Avoidance>();
                         Task_7.AI.Avoidance aiAgent = fishingShip.GetComponent<Task_7.AI.Avoidance>();
                         aiAgent.avoidanceRadius = tradeShipAvoidanceRadius;
-                        aiAgent.avoidanceFactor = pirateShipAvoidanceFactor;
+                        aiAgent.avoidanceFactor = tradeShipAvoidanceFactor;
                         aiAgent.debug = debug;
                     }
                     

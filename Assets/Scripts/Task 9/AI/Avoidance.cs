@@ -53,7 +53,7 @@ namespace Task_9.AI
             {
                 avoidanceForce = avoidanceForce.normalized * avoidanceFactor;
             }
-            
+            avoidanceForce.y = 0;
             output.Linear = avoidanceForce - agent.Velocity;
             
             return output;
