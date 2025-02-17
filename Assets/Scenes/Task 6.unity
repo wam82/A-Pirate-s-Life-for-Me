@@ -1625,8 +1625,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 989786624}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.8433915, z: -0.53729963, w: 0}
-  m_LocalPosition: {x: -4.9, y: 8.9, z: -4}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 100, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2177,50 +2177,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b533fb4c5a234cb28e13e848f1258e8, type: 3}
---- !u!1 &1912345423
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1912345425}
-  - component: {fileID: 1912345424}
-  m_Layer: 0
-  m_Name: ScoreManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1912345424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1912345423}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 356d257f44cb44470a561452b28c81ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1912345425
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1912345423}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.41977, y: 134.18922, z: -7.0511737}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1934914990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2648,6 +2604,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8106276661214820484, guid: f86e2ffe9e7814cc6a06d66901ecb115, type: 3}
+      propertyPath: pathPrefab
+      value: 
+      objectReference: {fileID: 6215058203622738370, guid: a817c9b575efa431f91771a0e81bf11f, type: 3}
+    - target: {fileID: 8106276661214820484, guid: f86e2ffe9e7814cc6a06d66901ecb115, type: 3}
       propertyPath: spawnRadius
       value: 7.5
       objectReference: {fileID: 0}
@@ -2663,6 +2623,10 @@ PrefabInstance:
       propertyPath: barrelWanderDegree
       value: 360
       objectReference: {fileID: 0}
+    - target: {fileID: 8106276661214820484, guid: f86e2ffe9e7814cc6a06d66901ecb115, type: 3}
+      propertyPath: scoreManagerPrefab
+      value: 
+      objectReference: {fileID: 368211718725039324, guid: 6bb8e46124a424399bddf3542bbf6fec, type: 3}
     - target: {fileID: 8106276661214820484, guid: f86e2ffe9e7814cc6a06d66901ecb115, type: 3}
       propertyPath: barrelWanderInterval
       value: 1
@@ -2817,7 +2781,6 @@ SceneRoots:
   - {fileID: 1934914990}
   - {fileID: 357677714}
   - {fileID: 1713706232}
-  - {fileID: 1912345425}
   - {fileID: 796039254727333313}
   - {fileID: 449857234}
   - {fileID: 307518562}

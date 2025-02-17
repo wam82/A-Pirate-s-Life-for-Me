@@ -1434,6 +1434,7 @@ public class GameManager : MonoBehaviour
                         aiAgent.maxSpeed = tradeShipMaxSpeed;
                         aiAgent.lockY = lockY;
                         aiAgent.viewDistance = viewDistance;
+                        aiAgent.ports = harbors;
                     }
 
                     if (!tradeShip.GetComponent<Task_8.AI.Arrive>())
