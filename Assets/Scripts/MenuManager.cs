@@ -16,6 +16,7 @@ public class MenuManager : MonoBehaviour
     private Button _task8;
     private Button _task9;
     private Button _task10;
+    private Button _exit;
 
     void Awake()
     {
@@ -30,6 +31,7 @@ public class MenuManager : MonoBehaviour
         _task8 = _uiDocument.rootVisualElement.Q<Button>("Task8");
         _task9 = _uiDocument.rootVisualElement.Q<Button>("Task9");
         _task10 = _uiDocument.rootVisualElement.Q<Button>("Task10");
+        _exit = _uiDocument.rootVisualElement.Q<Button>("Exit");
         _task1.RegisterCallback<ClickEvent>(evt => OnTaskButtonClicked(1));
         _task2.RegisterCallback<ClickEvent>(evt => OnTaskButtonClicked(2));
         _task3.RegisterCallback<ClickEvent>(evt => OnTaskButtonClicked(3));
@@ -40,6 +42,12 @@ public class MenuManager : MonoBehaviour
         _task8.RegisterCallback<ClickEvent>(evt => OnTaskButtonClicked(8));
         _task9.RegisterCallback<ClickEvent>(evt => OnTaskButtonClicked(9));
         _task10.RegisterCallback<ClickEvent>(evt => OnTaskButtonClicked(10));
+        _exit.RegisterCallback<ClickEvent>(evt => OnClickExit());
+    }
+
+    private void OnClickExit()
+    {
+        Application.Quit();
     }
     private void OnTaskButtonClicked(int taskNumber)
     {

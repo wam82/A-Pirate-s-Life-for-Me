@@ -17,6 +17,9 @@
                 <ui:Button text="Task 8" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task8" style="background-color: rgb(42, 134, 141);" />
                 <ui:Button text="Task 9" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task9" style="background-color: rgb(42, 134, 141);" />
                 <ui:Button text="Task 10" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task10" style="background-color: rgb(42, 134, 141);" />
+                <ui:VisualElement style="flex-grow: 1; flex-direction: column-reverse;">
+                    <ui:Button text="Exit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Exit" style="background-color: rgb(42, 134, 141); -unity-text-align: middle-center; white-space: normal;" />
+                </ui:VisualElement>
             </ui:GroupBox>
         </ui:VisualElement>
     </ui:VisualElement>

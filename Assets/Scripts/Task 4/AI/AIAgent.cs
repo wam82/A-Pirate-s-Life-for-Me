@@ -119,7 +119,7 @@ namespace Task_4.AI
                     }
                     
                     Obstacles.Enqueue(island);
-                    foreach (GameObject pirate in Task_3.GameManager.Instance.GetPirates())
+                    foreach (GameObject pirate in GameManager.Instance.GetPirates())
                     {
                         Obstacles.Enqueue(pirate);
                     }
@@ -273,7 +273,7 @@ namespace Task_4.AI
             Transform bestPirate = null;
             float closestDistance = float.MaxValue;
 
-            foreach (GameObject pirate in Task_3.GameManager.Instance.GetPirates())
+            foreach (GameObject pirate in GameManager.Instance.GetPirates())
             {
                 Transform pirateTransform = pirate.transform;
 
