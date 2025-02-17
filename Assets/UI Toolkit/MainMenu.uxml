@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; flex-direction: column; align-items: center; justify-content: center; background-image: url(&quot;project://database/Assets/Art/Images/Background.jpg?fileID=2800000&amp;guid=95b5e4520f9344b66a195c04bda8619d&amp;type=3#Background&quot;);">
+        <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-direction: row-reverse; justify-content: space-around; align-items: flex-end; align-self: stretch;">
+            <ui:Label tabindex="-1" text="A Pirate&apos;s Life" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" style="-unity-text-align: middle-center; -unity-font: url(&quot;project://database/Assets/Art/Fonts/xbones.ttf?fileID=12800000&amp;guid=f8a68b965330e480abb17dac407915bb&amp;type=3#xbones&quot;); color: rgb(255, 255, 255); -unity-font-definition: initial; font-size: 44px; -unity-background-image-tint-color: rgb(0, 0, 0);" />
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-self: stretch; justify-content: space-between;">
+            <ui:GroupBox style="font-size: 24px; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Art/Fonts/xbones.ttf?fileID=12800000&amp;guid=f8a68b965330e480abb17dac407915bb&amp;type=3#xbones&quot;);">
+                <ui:Button text="Task 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task1" style="background-color: rgb(218, 158, 80);" />
+                <ui:Button text="Task 2" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task2" style="background-color: rgb(218, 158, 80);" />
+                <ui:Button text="Task 3" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task3" style="background-color: rgb(218, 158, 80);" />
+                <ui:Button text="Task 4" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task4" style="background-color: rgb(218, 158, 80);" />
+                <ui:Button text="Task 5" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task5" style="background-color: rgb(218, 158, 80);" />
+            </ui:GroupBox>
+            <ui:GroupBox style="font-size: 24px; -unity-font-definition: initial; -unity-font: url(&quot;project://database/Assets/Art/Fonts/xbones.ttf?fileID=12800000&amp;guid=f8a68b965330e480abb17dac407915bb&amp;type=3#xbones&quot;); color: rgb(231, 228, 228);">
+                <ui:Button text="Task 6" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task6" style="background-color: rgb(42, 134, 141);" />
+                <ui:Button text="Task 7" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task7" style="background-color: rgb(42, 134, 141);" />
+                <ui:Button text="Task 8" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task8" style="background-color: rgb(42, 134, 141);" />
+                <ui:Button text="Task 9" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task9" style="background-color: rgb(42, 134, 141);" />
+                <ui:Button text="Task 10" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Task10" style="background-color: rgb(42, 134, 141);" />
+            </ui:GroupBox>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
